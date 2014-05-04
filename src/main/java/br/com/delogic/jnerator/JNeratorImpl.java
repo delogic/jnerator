@@ -6,8 +6,13 @@ import br.com.delogic.jnerator.impl.SimpleInstanceGenerator;
 
 public class JNeratorImpl implements JNerator {
 
-    public <E> Generator<E> prepare(Class<E> type) {
-        return new SimpleInstanceGenerator<E>(type, new SimpleAttributeConfigurationFactory(), new SimpleAttributeGeneratorFactory());
+    private AttributeGeneratorFactory attributeGeneratorFactory = new SimpleAttributeGeneratorFactory();
+
+    public <E> InstanceGenerator<E> prepare(Class<E> type) {
+        SimpleInstanceGenerator<E> instanceGenerator = new SimpleInstanceGenerator<E>(type, new SimpleAttributeConfigurationFactory(),
+            attributeGeneratorFactory);
+        attributeGeneratorFactory.addInstanceGenerator(instanceGenerator, type);
+        return instanceGenerator;
     }
 
 }

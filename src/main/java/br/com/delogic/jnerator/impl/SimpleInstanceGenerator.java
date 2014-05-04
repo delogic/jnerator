@@ -2,6 +2,7 @@ package br.com.delogic.jnerator.impl;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +12,16 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeConfigurationFactory;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.AttributeGeneratorFactory;
-import br.com.delogic.jnerator.Generator;
+import br.com.delogic.jnerator.InstanceGenerator;
 import br.com.delogic.jnerator.exception.JNeratorException;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
-public class SimpleInstanceGenerator<E> implements Generator<E> {
+public class SimpleInstanceGenerator<E> implements InstanceGenerator<E> {
 
     private final Map<String, AttributeConfiguration> attributesConfiguration;
     private final Map<String, AttributeGenerator<?>>  attributesGenerator;
     private final Class<E>                            type;
+    private List<E>                                   cachedInstances;
 
     public SimpleInstanceGenerator(Class<E> type, AttributeConfigurationFactory attributeConfigurationFactory,
         AttributeGeneratorFactory attributeGeneratorFactory) {
@@ -56,6 +58,8 @@ public class SimpleInstanceGenerator<E> implements Generator<E> {
 
         }
 
+        cachedInstances = Collections.unmodifiableList(instances);
+
         return instances;
 
     }
@@ -84,6 +88,10 @@ public class SimpleInstanceGenerator<E> implements Generator<E> {
         } catch (Exception e) {
             throw new JNeratorException("Error trying to set field value for field:" + field + " and value: " + value, e);
         }
+    }
+
+    public List<E> getCachedInstances() {
+        return cachedInstances;
     }
 
 }

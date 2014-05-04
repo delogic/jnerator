@@ -25,8 +25,28 @@ public class JNeratorTest extends Assert {
             assertNotNull(cat);
             assertNotNull(cat.getName());
             assertNotNull(cat.getId());
-            System.out.println(cat.getId() + "|" + cat.getName() + "|" + cat.getOrder());
+            System.out.println(cat.getId() + "|" + cat.getName() + "|" + cat.getOrder() + "|" + cat.getDescription());
         }
 
+        assertProducts(jNerator.prepare(Product.class).generate(50));
+
+    }
+
+    private void assertProducts(List<Product> products) {
+        assertNotNull(products);
+        assertFalse(products.isEmpty());
+        for (Product p : products) {
+            assertNotNull(p.getDescription());
+            assertNotNull(p.getName());
+            assertNotNull(p.getCategory());
+            assertNotNull(p.getCreationDate());
+            assertNotNull(p.getId());
+            assertNotNull(p.getPrice());
+            assertNotNull(p.getCategory().getDescription());
+            assertNotNull(p.getCategory().getName());
+            assertNotNull(p.getCategory().getId());
+            assertNotNull(p.getCategory().getOrder());
+            System.out.println(p.toString() + p.getCategory());
+        }
     }
 }
