@@ -1,0 +1,23 @@
+package br.com.delogic.jnerator.impl.generator;
+
+import java.util.Random;
+
+import br.com.delogic.jnerator.AttributeConfiguration;
+import br.com.delogic.jnerator.AttributeGenerator;
+
+public class CharacterAttributeGenerator implements AttributeGenerator<Character> {
+
+    private String possibleChars;
+    private Random random = new Random();
+
+    public CharacterAttributeGenerator() {
+        possibleChars = "abcdefghijklmnopqrstuvwxyz";
+        possibleChars += possibleChars.toUpperCase();
+        possibleChars += "0123456789";
+    }
+
+    public Character generate(int index, AttributeConfiguration attributeConfiguration) {
+        return possibleChars.charAt(random.nextInt(possibleChars.length()));
+    }
+
+}
