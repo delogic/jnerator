@@ -28,10 +28,9 @@ public class JNeratorTest extends Assert {
             System.out.println(cat.getId() + "|" + cat.getName() + "|" + cat.getOrder() + "|" + cat.getDescription());
         }
 
-        assertProducts(jNerator.prepare(Product.class).generate(50));
+        assertProducts(jNerator.prepare(Product.class).generate(100));
 
     }
-
     private void assertProducts(List<Product> products) {
         assertNotNull(products);
         assertFalse(products.isEmpty());
