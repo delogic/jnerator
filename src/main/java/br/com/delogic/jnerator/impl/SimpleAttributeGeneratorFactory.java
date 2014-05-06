@@ -16,6 +16,7 @@ import br.com.delogic.jnerator.impl.generator.CharacterAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.ComplexTypeAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.DateAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.DoubleAttributeGenerator;
+import br.com.delogic.jnerator.impl.generator.EnumAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.FloatAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.IntegerAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.LongAttributeGenerator;
@@ -71,6 +72,13 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
                 //if this is a simple attribute generator type
                 return new SimpleTypeCollectionAttributeGenerator(field, attributeGenerators.get(genericType.getClass().getSimpleName()));
             }
+        }
+
+        //when is an enum
+        if (Enum.class.isAssignableFrom(type)){
+
+            return new EnumAttributeGenerator(field);
+
         }
 
         if (instanceGenerators.containsKey(type)){

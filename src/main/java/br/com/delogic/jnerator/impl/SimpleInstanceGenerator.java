@@ -48,7 +48,7 @@ public class SimpleInstanceGenerator<E> implements InstanceGenerator<E> {
 
         List<E> instances = new ArrayList<E>();
 
-        for (int index = 0; index < amount; index++) {
+        for (int index = 1; index <= amount; index++) {
 
             E instance = (E) ReflectionUtils.instantiate(type);
 
