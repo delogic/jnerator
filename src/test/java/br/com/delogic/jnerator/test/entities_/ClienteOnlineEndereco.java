@@ -7,6 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 
+import br.com.delogic.jnerator.test.entities.Address;
+
 @SuppressWarnings("serial")
 @Entity
 public class ClienteOnlineEndereco extends LongEntityId {
@@ -19,7 +21,7 @@ public class ClienteOnlineEndereco extends LongEntityId {
     @JoinColumn(nullable = false)
     private ClienteOnline cliente;
 
-    private Endereco      endereco;
+    private Address      endereco;
 
     public ClienteOnline getCliente() {
         return cliente;
@@ -29,11 +31,11 @@ public class ClienteOnlineEndereco extends LongEntityId {
         this.cliente = cliente;
     }
 
-    public Endereco getEndereco() {
+    public Address getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(Address endereco) {
         this.endereco = endereco;
     }
 

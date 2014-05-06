@@ -27,8 +27,8 @@ import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactory {
 
-    Map<String, AttributeGenerator<?>> attributeGenerators = new HashMap<String, AttributeGenerator<?>>();
-    Map<Class<?>, InstanceGenerator<?>> instanceGenerators = new HashMap<Class<?>, InstanceGenerator<?>>();
+    Map<String, AttributeGenerator<?>>  attributeGenerators = new HashMap<String, AttributeGenerator<?>>();
+    Map<Class<?>, InstanceGenerator<?>> instanceGenerators  = new HashMap<Class<?>, InstanceGenerator<?>>();
 
     public SimpleAttributeGeneratorFactory() {
         attributeGenerators.put("boolean", new BooleanAttributeGenerator());
@@ -39,55 +39,75 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
         attributeGenerators.put("float", new FloatAttributeGenerator());
         attributeGenerators.put("double", new DoubleAttributeGenerator());
         attributeGenerators.put("char", new CharacterAttributeGenerator());
-        attributeGenerators.put("Boolean", new BooleanAttributeGenerator());
-        attributeGenerators.put("Byte", new ByteAttributeGenerator());
-        attributeGenerators.put("Short", new ShortAttributeGenerator());
-        attributeGenerators.put("Integer", new IntegerAttributeGenerator());
-        attributeGenerators.put("Long", new LongAttributeGenerator());
-        attributeGenerators.put("Float", new FloatAttributeGenerator());
-        attributeGenerators.put("Double", new DoubleAttributeGenerator());
-        attributeGenerators.put("Character", new CharacterAttributeGenerator());
-        attributeGenerators.put("String", new StringAttributeGenerator());
-        attributeGenerators.put("BigInteger", new BigIntegerAttributeGenerator());
-        attributeGenerators.put("BigDecimal", new BigDecimalAttributeGenerator());
-        attributeGenerators.put("Date", new DateAttributeGenerator());
+        attributeGenerators.put("java.lang.Boolean", new BooleanAttributeGenerator());
+        attributeGenerators.put("java.lang.Byte", new ByteAttributeGenerator());
+        attributeGenerators.put("java.lang.Short", new ShortAttributeGenerator());
+        attributeGenerators.put("java.lang.Integer", new IntegerAttributeGenerator());
+        attributeGenerators.put("java.lang.Long", new LongAttributeGenerator());
+        attributeGenerators.put("java.lang.Float", new FloatAttributeGenerator());
+        attributeGenerators.put("java.lang.Double", new DoubleAttributeGenerator());
+        attributeGenerators.put("java.lang.Character", new CharacterAttributeGenerator());
+        attributeGenerators.put("java.lang.String", new StringAttributeGenerator());
+        attributeGenerators.put("java.math.BigInteger", new BigIntegerAttributeGenerator());
+        attributeGenerators.put("java.math.BigDecimal", new BigDecimalAttributeGenerator());
+        attributeGenerators.put("java.util.Date", new DateAttributeGenerator());
     }
 
     public AttributeGenerator<?> create(Field field, final InstanceGenerator<?> generator) {
 
         Class<?> type = field.getType();
 
-        if (attributeGenerators.containsKey(type.getSimpleName())) {
+        if (attributeGenerators.containsKey(type.getName())) {
             // simple types
-            return attributeGenerators.get(type.getSimpleName());
+            return attributeGenerators.get(type.getName());
         }
 
-        //when the attribute is a collection
+        // when the attribute is a collection
         if (Collection.class.isAssignableFrom(type)) {
 
-            //getting the generic type
+            // getting the generic type
             Class<?> genericType = (Class<?>) ReflectionUtils.getFirstGenericType(field);
 
-            if (attributeGenerators.containsKey(genericType.getSimpleName())) {
-                //if this is a simple attribute generator type
-                return new SimpleTypeCollectionAttributeGenerator(field, attributeGenerators.get(genericType.getClass().getSimpleName()));
+            System.err.println(genericType);
+
+            if (attributeGenerators.containsKey(genericType.getName())) {
+                // if this is a simple attribute generator type
+                return new SimpleTypeCollectionAttributeGenerator(field, attributeGenerators.get(genericType.getName()));
             }
+
+            // when generic type is an enum
+            if (Enum.class.isAssignableFrom(genericType)) {
+                // if this is a simple attribute generator type
+                return new SimpleTypeCollectionAttributeGenerator(field, registerAndReturnEnumAttributeGenerator(genericType));
+
+            }
+
         }
 
-        //when is an enum
-        if (Enum.class.isAssignableFrom(type)){
-
-            return new EnumAttributeGenerator(field);
-
+        // when is an enum
+        if (Enum.class.isAssignableFrom(type)) {
+            return registerAndReturnEnumAttributeGenerator(type);
         }
 
-        if (instanceGenerators.containsKey(type)){
+        //when the attribute is another instance
+        if (instanceGenerators.containsKey(type)) {
             return new ComplexTypeAttributeGenerator(field, instanceGenerators.get(type));
         }
 
         throw new IllegalArgumentException(String.format("Unfortunatelly we don't know how to create %s. "
-            + "Configure this type to be created before the current object or register an attribute generator for this attribute.", type));
+            + "Configure this type to be created before %s or register an attribute generator for this attribute.", type,
+            field.getDeclaringClass()));
 
+    }
+
+    @SuppressWarnings("unchecked")
+    private AttributeGenerator<Enum<?>> registerAndReturnEnumAttributeGenerator(Class<?> type) {
+        if (!attributeGenerators.containsKey(type.getName())) {
+            // if is a new type we create and add
+            attributeGenerators.put(type.getName(), new EnumAttributeGenerator(type));
+        }
+
+        return (AttributeGenerator<Enum<?>>) attributeGenerators.get(type.getName());
     }
 
     public <E> void addInstanceGenerator(InstanceGenerator<E> instanceGenerator, Class<?> type) {

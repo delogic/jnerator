@@ -4,24 +4,26 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
+import br.com.delogic.jnerator.test.entities.City;
+
 @SuppressWarnings("serial")
 @Entity
 @DiscriminatorValue("Cidade")
 public class RegiaoAtendimentoCidade extends RegiaoAtendimento {
 
     @NotNull
-    private Cidade cidade;
+    private City cidade;
 
     @Override
     public String getDescricao() {
-        return cidade.getNome();
+        return cidade.getName();
     }
 
-    public Cidade getCidade() {
+    public City getCidade() {
         return cidade;
     }
 
-    public void setCidade(Cidade cidade) {
+    public void setCidade(City cidade) {
         this.cidade = cidade;
     }
 

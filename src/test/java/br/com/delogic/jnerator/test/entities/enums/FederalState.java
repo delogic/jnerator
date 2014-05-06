@@ -1,6 +1,6 @@
 package br.com.delogic.jnerator.test.entities.enums;
 
-public enum UnidadeFederativa {
+public enum FederalState {
 
     AC("Acre"), AL("Alagoas"), AP("Amapá"), AM("Amazonas"), BA("Bahia"), CE("Ceará"), DF("Distrito Federal"), ES("Espírito Santo"), GO(
         "Goiás"), MA("Maranhão"), MT("Mato Grosso"), MS("Mato Grosso do Sul"), MG("Minas Gerais"), PA("Pará"), PB("Paraíba"), PR("Paraná"), PE(
@@ -9,7 +9,7 @@ public enum UnidadeFederativa {
 
     private final String descricao;
 
-    private UnidadeFederativa(String desc) {
+    private FederalState(String desc) {
         this.descricao = desc;
     }
 

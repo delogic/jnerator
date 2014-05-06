@@ -35,6 +35,4 @@ public abstract class PedidoFormaEntrega {
         this.pedido = pedido;
     }
 
-    public abstract String getDescricao();
-
 }

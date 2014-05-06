@@ -1,6 +1,5 @@
 package br.com.delogic.jnerator.impl.generator;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -8,13 +7,13 @@ import java.util.Random;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 
-public class EnumAttributeGenerator implements AttributeGenerator<Object> {
+public class EnumAttributeGenerator implements AttributeGenerator<Enum<?>> {
 
     private List<?> enums;
-    private Random random;
+    private Random  random;
 
-    public EnumAttributeGenerator(Field field) {
-        enums = Arrays.asList(field.getType().getEnumConstants());
+    public EnumAttributeGenerator(Class<?> type) {
+        enums = Arrays.asList(type.getEnumConstants());
         random = new Random();
     }
 

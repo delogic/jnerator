@@ -1,5 +1,6 @@
 package br.com.delogic.jnerator;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -8,13 +9,21 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import br.com.delogic.jnerator.test.entities.Address;
 import br.com.delogic.jnerator.test.entities.Category;
+import br.com.delogic.jnerator.test.entities.City;
 import br.com.delogic.jnerator.test.entities.Product;
 import br.com.delogic.jnerator.test.entities.Tenent;
+import br.com.delogic.jnerator.test.entities.TenentAddress;
+import br.com.delogic.jnerator.test.entities.TenentPaymentsAccepted;
+import br.com.delogic.jnerator.test.entities.TenentStorePersonalization;
+import br.com.delogic.jnerator.test.entities.TenentWorkingHours;
+import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class JNeratorTest extends Assert {
 
     private JNerator jNerator;
+    private int      amount = 100;
 
     @Before
     public void init() {
@@ -24,36 +33,34 @@ public class JNeratorTest extends Assert {
     @Test
     public void test() {
 
-        assertTenents(jNerator.prepare(Tenent.class).generate(50));
-        assertCategories(jNerator.prepare(Category.class).generate(50));
-        assertProducts(jNerator.prepare(Product.class).generate(100));
+        assertHasData(jNerator.prepare(Tenent.class).generate(amount));
+        assertHasData(jNerator.prepare(Category.class).generate(amount));
+        assertHasData(jNerator.prepare(Product.class).generate(amount));
+        assertHasData(jNerator.prepare(City.class).generate(amount));
+        assertHasData(jNerator.prepare(Address.class).generate(amount));
+        assertHasData(jNerator.prepare(TenentAddress.class).generate(amount));
+        assertHasData(jNerator.prepare(TenentPaymentsAccepted.class).generate(amount));
+        assertHasData(jNerator.prepare(TenentStorePersonalization.class).generate(amount));
+        assertHasData(jNerator.prepare(TenentWorkingHours.class).generate(amount));
 
     }
 
-    private void assertTenents(List<Tenent> tenents) {
-        assertNotNull(tenents);
-        for (Tenent t: tenents){
-            assertNotNull(t.getCompanyName());
-            assertNotNull(t.getDomain());
-            assertNotNull(t.getEmail());
-            assertNotNull(t.getActive());
-            assertNotNull(t.getId());
-            assertNotNull(t.getLastAccess());
-            toString(t);
-        }
-    }
+    private void assertHasData(List<?> objects) {
+        assertNotNull(objects);
+        assertTrue(objects.size() >= amount);
 
-    private void assertCategories(List<Category> categories) {
-        assertNotNull(categories);
-        assertEquals(50, categories.size());
-        for (Category cat : categories) {
-            assertNotNull(cat);
-            assertNotNull(cat.getName());
-            assertNotNull(cat.getId());
-            assertNotNull(cat.getCompositions());
-            assertNotNull(cat.getOrder());
-            assertNotNull(cat.getTenent());
-            toString(cat);
+        List<Field> allFields = ReflectionUtils.getAllDeclaredFields(objects.get(0).getClass());
+
+        for (Object obj : objects) {
+            for (Field field : allFields) {
+                try {
+                    field.setAccessible(true);
+                    assertNotNull(field.get(obj));
+                } catch (Exception e) {
+                    throw new RuntimeException("Error when trying to get field value for assert", e);
+                }
+            }
+            toString(obj);
         }
     }
 
@@ -61,19 +68,4 @@ public class JNeratorTest extends Assert {
         System.out.println(ToStringBuilder.reflectionToString(object, ToStringStyle.DEFAULT_STYLE));
     }
 
-    private void assertProducts(List<Product> products) {
-        assertNotNull(products);
-        assertFalse(products.isEmpty());
-        for (Product p : products) {
-            assertNotNull(p.getDescription());
-            assertNotNull(p.getName());
-            assertNotNull(p.getCategory());
-            assertNotNull(p.getId());
-            assertNotNull(p.getValue());
-            assertNotNull(p.getCategory().getName());
-            assertNotNull(p.getCategory().getId());
-            assertNotNull(p.getCategory().getOrder());
-            toString(p);
-        }
-    }
 }

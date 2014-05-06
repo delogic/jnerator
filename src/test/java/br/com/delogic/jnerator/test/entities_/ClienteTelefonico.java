@@ -5,6 +5,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 
+import br.com.delogic.jnerator.test.entities.Address;
 import br.com.delogic.jnerator.test.entities.Tenent;
 import br.com.delogic.jnerator.test.entities.util.TenentProperty;
 
@@ -19,7 +20,7 @@ public class ClienteTelefonico extends Cliente implements TenentProperty {
     @JoinColumn(nullable = false)
     private Tenent arrendatario;
 
-    private Endereco     endereco;
+    private Address     endereco;
 
     @Override
     public String getInformacoesCompletas() {
@@ -42,11 +43,11 @@ public class ClienteTelefonico extends Cliente implements TenentProperty {
         this.arrendatario = arrendatario;
     }
 
-    public Endereco getEndereco() {
+    public Address getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(Endereco endereco) {
+    public void setEndereco(Address endereco) {
         this.endereco = endereco;
     }
 

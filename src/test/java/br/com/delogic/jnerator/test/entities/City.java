@@ -1,4 +1,4 @@
-package br.com.delogic.jnerator.test.entities_;
+package br.com.delogic.jnerator.test.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,27 +12,28 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import br.com.delogic.jnerator.test.entities.enums.UnidadeFederativa;
+import br.com.delogic.jnerator.test.entities.enums.FederalState;
+import br.com.delogic.jnerator.test.entities_.LongEntityId;
 
 @SuppressWarnings("serial")
 @Entity
-public class Cidade extends LongEntityId {
+public class City extends LongEntityId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqCidade")
-    @SequenceGenerator(name = "seqCidade", sequenceName = "seq_cidade", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqCity")
+    @SequenceGenerator(name = "seqCity", sequenceName = "seq_city", allocationSize = 1, initialValue = 1)
     @Column(precision = 10)
     @NotNull
-    private Long              id;
+    private Long         id;
 
     @NotEmpty
     @Column(length = 100, nullable = false)
-    private String            nome;
+    private String       name;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(length = 3, nullable = false)
-    private UnidadeFederativa uf;
+    private FederalState state;
 
     public Long getId() {
         return id;
@@ -42,20 +43,20 @@ public class Cidade extends LongEntityId {
         this.id = id;
     }
 
-    public UnidadeFederativa getUf() {
-        return uf;
+    public String getName() {
+        return name;
     }
 
-    public void setUf(UnidadeFederativa uf) {
-        this.uf = uf;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getNome() {
-        return nome;
+    public FederalState getState() {
+        return state;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setState(FederalState state) {
+        this.state = state;
     }
 
 }
