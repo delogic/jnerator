@@ -13,6 +13,8 @@ import br.com.delogic.jnerator.test.entities.Additional;
 import br.com.delogic.jnerator.test.entities.Address;
 import br.com.delogic.jnerator.test.entities.Category;
 import br.com.delogic.jnerator.test.entities.City;
+import br.com.delogic.jnerator.test.entities.DeliveryRegionByCity;
+import br.com.delogic.jnerator.test.entities.DeliveryRegionByZipCode;
 import br.com.delogic.jnerator.test.entities.LocalClient;
 import br.com.delogic.jnerator.test.entities.OnlineClient;
 import br.com.delogic.jnerator.test.entities.OnlineClientAddress;
@@ -52,8 +54,8 @@ public class JNeratorTest extends Assert {
         assertHasData(jNerator.prepare(OnlineClientAddress.class).generate(amount));
         assertHasData(jNerator.prepare(PhoneClient.class).generate(amount));
         assertHasData(jNerator.prepare(Additional.class).generate(amount));
-//        assertHasData(jNerator.prepare(.class).generate(amount));
-//        assertHasData(jNerator.prepare(.class).generate(amount));
+        assertHasData(jNerator.prepare(DeliveryRegionByCity.class).generate(amount));
+        assertHasData(jNerator.prepare(DeliveryRegionByZipCode.class).generate(amount));
 
 
     }
