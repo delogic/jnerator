@@ -1,4 +1,4 @@
-package br.com.delogic.jnerator.test.entities_;
+package br.com.delogic.jnerator.test.entities;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -13,16 +13,16 @@ import javax.persistence.SequenceGenerator;
 @SuppressWarnings("serial")
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "TIPO", length = 50)
-public abstract class Cliente extends LongEntityId {
+@DiscriminatorColumn(name = "TYPE", length = 50)
+public abstract class Client extends LongEntityId {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqCliente")
-    @SequenceGenerator(name = "seqCliente", sequenceName = "seq_cliente", allocationSize = 1, initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seqClient")
+    @SequenceGenerator(name = "seqClient", sequenceName = "seq_client", allocationSize = 1, initialValue = 1)
     private Long   id;
 
     @Column(length = 100, nullable = false)
-    private String nome;
+    private String name;
 
     public Long getId() {
         return id;
@@ -32,14 +32,12 @@ public abstract class Cliente extends LongEntityId {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
-
-    public abstract String getInformacoesCompletas();
 
 }

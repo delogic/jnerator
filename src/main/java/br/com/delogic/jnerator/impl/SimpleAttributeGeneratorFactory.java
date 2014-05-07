@@ -8,12 +8,14 @@ import java.util.Map;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.AttributeGeneratorFactory;
 import br.com.delogic.jnerator.InstanceGenerator;
+import br.com.delogic.jnerator.impl.generator.ArrayAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.BigDecimalAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.BigIntegerAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.BooleanAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.ByteAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.CharacterAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.ComplexTypeAttributeGenerator;
+import br.com.delogic.jnerator.impl.generator.ComplexTypeCollectionAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.DateAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.DoubleAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.EnumAttributeGenerator;
@@ -79,7 +81,11 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
             if (Enum.class.isAssignableFrom(genericType)) {
                 // if this is a simple attribute generator type
                 return new SimpleTypeCollectionAttributeGenerator(field, registerAndReturnEnumAttributeGenerator(genericType));
+            }
 
+            //if is a collection of objects
+            if (instanceGenerators.containsKey(genericType)){
+                return new ComplexTypeCollectionAttributeGenerator(field, instanceGenerators.get(genericType));
             }
 
         }
@@ -87,6 +93,15 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
         // when is an enum
         if (Enum.class.isAssignableFrom(type)) {
             return registerAndReturnEnumAttributeGenerator(type);
+        }
+
+        //when is an array
+        if (type.isArray()){
+
+            if (attributeGenerators.containsKey(type.getComponentType().getName())){
+                return new ArrayAttributeGenerator(field, attributeGenerators.get(type.getComponentType().getName()));
+            }
+
         }
 
         //when the attribute is another instance

@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import br.com.delogic.jnerator.test.entities.enums.FederalState;
-import br.com.delogic.jnerator.test.entities_.LongEntityId;
 
 @SuppressWarnings("serial")
 @Entity

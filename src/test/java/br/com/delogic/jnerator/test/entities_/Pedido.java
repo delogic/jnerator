@@ -20,6 +20,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.com.delogic.jnerator.test.entities.Client;
+import br.com.delogic.jnerator.test.entities.LongEntityId;
 import br.com.delogic.jnerator.test.entities.Tenent;
 import br.com.delogic.jnerator.test.entities.enums.PedidoSituacao;
 import br.com.delogic.jnerator.test.entities.util.TenentProperty;
@@ -61,7 +63,7 @@ public class Pedido extends LongEntityId implements TenentProperty {
     private BigDecimal           valorTotal;
 
     @JoinColumn(nullable = false)
-    private Cliente              cliente;
+    private Client              cliente;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "pedido")
     private PedidoFormaEntrega   formaEntrega;
@@ -144,11 +146,11 @@ public class Pedido extends LongEntityId implements TenentProperty {
         this.valorTotal = valorTotal;
     }
 
-    public Cliente getCliente() {
+    public Client getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    public void setCliente(Client cliente) {
         this.cliente = cliente;
     }
 

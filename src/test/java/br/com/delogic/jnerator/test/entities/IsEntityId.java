@@ -1,4 +1,4 @@
-package br.com.delogic.jnerator.test.entities_;
+package br.com.delogic.jnerator.test.entities;
 
 public interface IsEntityId<T> {
 

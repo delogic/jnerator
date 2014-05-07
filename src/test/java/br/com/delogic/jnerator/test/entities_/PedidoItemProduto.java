@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 
+import br.com.delogic.jnerator.test.entities.LongEntityId;
+
 @SuppressWarnings("serial")
 @Entity
 public class PedidoItemProduto extends LongEntityId {

@@ -1,16 +1,14 @@
 package br.com.delogic.jnerator.test.entities;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
-
-import br.com.delogic.jnerator.test.entities.util.TenentProperty;
 
 @SuppressWarnings("serial")
-@MappedSuperclass
-public abstract class TenentEntity extends LongEntityId implements TenentProperty {
+@Entity
+@DiscriminatorValue("Local")
+public class LocalClient extends Client {
 
-    @ManyToOne
     @JoinColumn(nullable = false)
     private Tenent tenent;
 

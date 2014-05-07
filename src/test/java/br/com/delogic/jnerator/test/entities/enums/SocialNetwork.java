@@ -1,12 +1,12 @@
 package br.com.delogic.jnerator.test.entities.enums;
 
-public enum RedeSocial {
+public enum SocialNetwork {
 
     FACEBOOK("dd/MM/yyyy"), GOOGLE_PLUS("yyyy-MM-dd");
 
     private final String dateFormat;
 
-    private RedeSocial(String df) {
+    private SocialNetwork(String df) {
         this.dateFormat = df;
     }
 
