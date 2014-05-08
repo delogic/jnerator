@@ -8,18 +8,16 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.InstanceGenerator;
 
-public class ComplexTypeAttributeGenerator implements AttributeGenerator<Object> {
+public class ComplexTypeAttributeGenerator implements AttributeGenerator<Object, Object> {
 
-    private final Field                field;
     private final InstanceGenerator<?> instanceGenerator;
     private final Random               random = new Random();
 
     public ComplexTypeAttributeGenerator(Field field, InstanceGenerator<?> instanceGenerator) {
-        this.field = field;
         this.instanceGenerator = instanceGenerator;
     }
 
-    public Object generate(int index, AttributeConfiguration attributeConfiguration) {
+    public Object generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
         List<?> entitiesCached = instanceGenerator.getCachedInstances();
         return entitiesCached.get(random.nextInt(entitiesCached.size()));
     }

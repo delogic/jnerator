@@ -11,22 +11,22 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
-public class SimpleTypeCollectionAttributeGenerator implements AttributeGenerator<Collection<?>> {
+public class SimpleTypeCollectionAttributeGenerator implements AttributeGenerator<Collection<?>, Object> {
 
     private final Field field;
-    private final AttributeGenerator<?> simpleAttributeGenerator;
+    private final AttributeGenerator<?, Object> simpleAttributeGenerator;
 
-    public SimpleTypeCollectionAttributeGenerator(Field field, AttributeGenerator<?> attributeGenerator) {
+    public SimpleTypeCollectionAttributeGenerator(Field field, AttributeGenerator<?, Object> attributeGenerator) {
         this.field = field;
         this.simpleAttributeGenerator = attributeGenerator;
     }
 
-    public Collection<?> generate(int index, AttributeConfiguration attributeConfiguration) {
+    public Collection<?> generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
 
         Collection<Object> collection = createCollection(field);
 
         for (int i = 0; i < 5; i++){
-            collection.add(simpleAttributeGenerator.generate(i, attributeConfiguration));
+            collection.add(simpleAttributeGenerator.generate(i, attributeConfiguration, instance));
         }
 
         return collection;

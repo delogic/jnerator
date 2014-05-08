@@ -2,10 +2,12 @@ package br.com.delogic.jnerator;
 
 import java.util.List;
 
-public interface InstanceGenerator<E> {
+public interface InstanceGenerator<T> {
 
-    List<E> generate(int amount);
+    List<T> generate(int amount);
 
-    List<E> getCachedInstances();
+    List<T> getCachedInstances();
+
+    <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator);
 
 }

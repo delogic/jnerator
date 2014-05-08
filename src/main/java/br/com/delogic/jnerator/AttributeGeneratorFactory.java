@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 public interface AttributeGeneratorFactory {
 
-    AttributeGenerator<?> create(Field field, InstanceGenerator<?> generator);
+    AttributeGenerator<?,Object> create(Field field, InstanceGenerator<?> generator);
 
     <E> void addInstanceGenerator(InstanceGenerator<E> instanceGenerator, Class<?> type);
 

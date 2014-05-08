@@ -16,22 +16,25 @@ import br.com.delogic.jnerator.InstanceGenerator;
 import br.com.delogic.jnerator.exception.JNeratorException;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
-public class SimpleInstanceGenerator<E> implements InstanceGenerator<E> {
+public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
-    private final Map<String, AttributeConfiguration> attributesConfiguration;
-    private final Map<String, AttributeGenerator<?>>  attributesGenerator;
-    private final Class<E>                            type;
-    private List<E>                                   cachedInstances;
+    // <AttributeName, AttributeConfiguration>
+    private final Map<String, AttributeConfiguration>        attributesConfiguration;
 
-    public SimpleInstanceGenerator(Class<E> type, AttributeConfigurationFactory attributeConfigurationFactory,
+    // <AttributeName, AttributeGenerator>
+    private final Map<String, AttributeGenerator<?, Object>> attributesGenerator;
+    private final Class<T>                                   type;
+    private List<T>                                          cachedInstances;
+
+    public SimpleInstanceGenerator(Class<T> type, AttributeConfigurationFactory attributeConfigurationFactory,
         AttributeGeneratorFactory attributeGeneratorFactory) {
         this.type = type;
         this.attributesConfiguration = asMap(attributeConfigurationFactory.create(type));
-        this.attributesGenerator = new HashMap<String, AttributeGenerator<?>>();
+        this.attributesGenerator = new HashMap<String, AttributeGenerator<?, Object>>();
 
-        for (Entry<String, AttributeConfiguration> config : attributesConfiguration.entrySet()) {
-            AttributeGenerator<?> generator = attributeGeneratorFactory.create(config.getValue().getField(), this);
-            attributesGenerator.put(config.getKey(), generator);
+        for (Entry<String, AttributeConfiguration> attributeConfiguration : attributesConfiguration.entrySet()) {
+            AttributeGenerator<?, Object> generator = attributeGeneratorFactory.create(attributeConfiguration.getValue().getField(), this);
+            attributesGenerator.put(attributeConfiguration.getValue().getName(), generator);
         }
 
     }
@@ -44,13 +47,13 @@ public class SimpleInstanceGenerator<E> implements InstanceGenerator<E> {
         return attrs;
     }
 
-    public List<E> generate(int amount) {
+    public List<T> generate(int amount) {
 
-        List<E> instances = new ArrayList<E>();
+        List<T> instances = new ArrayList<T>();
 
         for (int index = 1; index <= amount; index++) {
 
-            E instance = (E) ReflectionUtils.instantiate(type);
+            T instance = (T) ReflectionUtils.instantiate(type);
 
             populateInstance(instance, index);
 
@@ -64,13 +67,13 @@ public class SimpleInstanceGenerator<E> implements InstanceGenerator<E> {
 
     }
 
-    void populateInstance(E instance, int index) {
+    void populateInstance(T instance, int index) {
 
         for (Entry<String, AttributeConfiguration> config : attributesConfiguration.entrySet()) {
 
-            AttributeGenerator<?> generator = attributesGenerator.get(config.getKey());
+            AttributeGenerator<?, Object> generator = attributesGenerator.get(config.getKey());
 
-            Object value = generator.generate(index, config.getValue());
+            Object value = generator.generate(index, config.getValue(), instance);
 
             Field field = config.getValue().getField();
 
@@ -79,7 +82,7 @@ public class SimpleInstanceGenerator<E> implements InstanceGenerator<E> {
         }
     }
 
-    void setFieldValue(Field field, E instance, Object value) {
+    void setFieldValue(Field field, T instance, Object value) {
         try {
             if (!field.isAccessible()) {
                 field.setAccessible(true);
@@ -90,8 +93,13 @@ public class SimpleInstanceGenerator<E> implements InstanceGenerator<E> {
         }
     }
 
-    public List<E> getCachedInstances() {
+    public List<T> getCachedInstances() {
         return cachedInstances;
+    }
+
+    public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator) {
+        attributesGenerator.put(attributeName, (AttributeGenerator<?, Object>) attributeGenerator);
+        return this;
     }
 
 }

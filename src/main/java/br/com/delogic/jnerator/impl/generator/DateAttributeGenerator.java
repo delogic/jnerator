@@ -5,9 +5,9 @@ import java.util.Date;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 
-public class DateAttributeGenerator implements AttributeGenerator<Date> {
+public class DateAttributeGenerator implements AttributeGenerator<Date, Object> {
 
-    public Date generate(int index, AttributeConfiguration attributeConfiguration) {
+    public Date generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
         return new Date();
     }
 

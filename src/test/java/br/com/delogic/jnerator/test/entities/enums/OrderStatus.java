@@ -1,6 +1,6 @@
 package br.com.delogic.jnerator.test.entities.enums;
 
-public enum PedidoSituacao {
+public enum OrderStatus {
 
     NOVO("Novo", "criado"), ACEITO("Aceito", "aceito"), ENTREGA("Em Entrega", "entregue"), FINALIZADO("Finalizado", "finalizado"), RECUSADO(
         "Recusado", "recusado");
@@ -8,7 +8,7 @@ public enum PedidoSituacao {
     private final String descricao;
     private final String descricaoAcao;
 
-    private PedidoSituacao(String desc, String acao) {
+    private OrderStatus(String desc, String acao) {
         this.descricao = desc;
         this.descricaoAcao = acao;
     }

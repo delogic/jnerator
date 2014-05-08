@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
-import br.com.delogic.jnerator.test.entities.enums.FormaPagamento;
+import br.com.delogic.jnerator.test.entities.enums.CreditCards;
 import br.com.delogic.jnerator.test.entities.util.TenentProperty;
 
 @Entity
@@ -27,13 +27,13 @@ public class TenentPaymentsAccepted implements TenentProperty {
     @CollectionTable(name = "tenentstorepayments", joinColumns = { @JoinColumn(name = "tenent_id", nullable = false) })
     @Enumerated(EnumType.STRING)
     @Column(name = "paymenttype", length = 50, nullable = false)
-    private Set<FormaPagamento> storePaymentTypes;
+    private Set<CreditCards> storePaymentTypes;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tenentdeliverypayments", joinColumns = { @JoinColumn(name = "tenent_id", nullable = false) })
     @Enumerated(EnumType.STRING)
     @Column(name = "paymenttype", length = 50, nullable = false)
-    private Set<FormaPagamento> deliveryPaymentTypes;
+    private Set<CreditCards> deliveryPaymentTypes;
 
     public Tenent getTenent() {
         return tenent;
@@ -43,19 +43,19 @@ public class TenentPaymentsAccepted implements TenentProperty {
         this.tenent = tenent;
     }
 
-    public Set<FormaPagamento> getStorePaymentTypes() {
+    public Set<CreditCards> getStorePaymentTypes() {
         return storePaymentTypes;
     }
 
-    public void setStorePaymentTypes(Set<FormaPagamento> storePaymentTypes) {
+    public void setStorePaymentTypes(Set<CreditCards> storePaymentTypes) {
         this.storePaymentTypes = storePaymentTypes;
     }
 
-    public Set<FormaPagamento> getDeliveryPaymentTypes() {
+    public Set<CreditCards> getDeliveryPaymentTypes() {
         return deliveryPaymentTypes;
     }
 
-    public void setDeliveryPaymentTypes(Set<FormaPagamento> deliveryPaymentTypes) {
+    public void setDeliveryPaymentTypes(Set<CreditCards> deliveryPaymentTypes) {
         this.deliveryPaymentTypes = deliveryPaymentTypes;
     }
 

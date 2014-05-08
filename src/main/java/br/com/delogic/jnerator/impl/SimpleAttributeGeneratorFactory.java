@@ -1,10 +1,12 @@
 package br.com.delogic.jnerator.impl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.AttributeGeneratorFactory;
 import br.com.delogic.jnerator.InstanceGenerator;
@@ -25,12 +27,13 @@ import br.com.delogic.jnerator.impl.generator.LongAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.ShortAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.SimpleTypeCollectionAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.StringAttributeGenerator;
+import br.com.delogic.jnerator.impl.generator.UndefinedAttributeExceptionGenerator;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactory {
 
-    Map<String, AttributeGenerator<?>>  attributeGenerators = new HashMap<String, AttributeGenerator<?>>();
-    Map<Class<?>, InstanceGenerator<?>> instanceGenerators  = new HashMap<Class<?>, InstanceGenerator<?>>();
+    Map<String, AttributeGenerator<?, Object>> attributeGenerators = new HashMap<String, AttributeGenerator<?, Object>>();
+    Map<Class<?>, InstanceGenerator<?>>        instanceGenerators  = new HashMap<Class<?>, InstanceGenerator<?>>();
 
     public SimpleAttributeGeneratorFactory() {
         attributeGenerators.put("boolean", new BooleanAttributeGenerator());
@@ -55,9 +58,9 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
         attributeGenerators.put("java.util.Date", new DateAttributeGenerator());
     }
 
-    public AttributeGenerator<?> create(Field field, final InstanceGenerator<?> generator) {
+    public AttributeGenerator<?, Object> create(final Field field, final InstanceGenerator<?> generator) {
 
-        Class<?> type = field.getType();
+        final Class<?> type = field.getType();
 
         if (attributeGenerators.containsKey(type.getName())) {
             // simple types
@@ -83,8 +86,8 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
                 return new SimpleTypeCollectionAttributeGenerator(field, registerAndReturnEnumAttributeGenerator(genericType));
             }
 
-            //if is a collection of objects
-            if (instanceGenerators.containsKey(genericType)){
+            // if is a collection of objects
+            if (instanceGenerators.containsKey(genericType)) {
                 return new ComplexTypeCollectionAttributeGenerator(field, instanceGenerators.get(genericType));
             }
 
@@ -95,34 +98,48 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
             return registerAndReturnEnumAttributeGenerator(type);
         }
 
-        //when is an array
-        if (type.isArray()){
+        // when is an array
+        if (type.isArray()) {
 
-            if (attributeGenerators.containsKey(type.getComponentType().getName())){
+            if (attributeGenerators.containsKey(type.getComponentType().getName())) {
                 return new ArrayAttributeGenerator(field, attributeGenerators.get(type.getComponentType().getName()));
             }
 
         }
 
-        //when the attribute is another instance
+        // when the attribute is another instance
         if (instanceGenerators.containsKey(type)) {
             return new ComplexTypeAttributeGenerator(field, instanceGenerators.get(type));
         }
 
-        throw new IllegalArgumentException(String.format("Unfortunatelly we don't know how to create %s. "
-            + "Configure this type to be created before %s or register an attribute generator for this attribute.", type,
-            field.getDeclaringClass()));
+        // return a attribute generation to throw an exception in case it's not
+        // replaced after prepare phase
+        return new UndefinedAttributeExceptionGenerator() {
+            public Object generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+                throw new IllegalArgumentException(String.format("Unfortunatelly we don't know how to create %s.%s of type %s "
+                    + "Configure this type to be created before %s or register an attribute generator for attribute %s.",
+                    field.getDeclaringClass(), field.getName(), firstValidValue(field.getGenericType(), field.getType()), field.getDeclaringClass(), field.getName()));
+            }
+        };
 
     }
 
+    protected Object firstValidValue(Type genericType, Class<?> type) {
+        if (genericType != null){
+            return genericType;
+        } else {
+            return type;
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    private AttributeGenerator<Enum<?>> registerAndReturnEnumAttributeGenerator(Class<?> type) {
+    private AttributeGenerator<Enum<?>, Object> registerAndReturnEnumAttributeGenerator(Class<?> type) {
         if (!attributeGenerators.containsKey(type.getName())) {
             // if is a new type we create and add
             attributeGenerators.put(type.getName(), new EnumAttributeGenerator(type));
         }
 
-        return (AttributeGenerator<Enum<?>>) attributeGenerators.get(type.getName());
+        return (AttributeGenerator<Enum<?>, Object>) attributeGenerators.get(type.getName());
     }
 
     public <E> void addInstanceGenerator(InstanceGenerator<E> instanceGenerator, Class<?> type) {
