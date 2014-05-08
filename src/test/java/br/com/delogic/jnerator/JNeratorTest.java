@@ -124,12 +124,7 @@ public class JNeratorTest extends Assert {
             }
         });
 
-        orderGenerator.setAttributeGenerator("client", new AttributeGenerator<Client, Order>() {
-            public Client generate(int index, AttributeConfiguration attributeConfiguration, Order instance) {
-                return new LocalClient();
-            }
-        });
-
+        //
         orderGenerator.setAttributeGenerator("deliveryMode", new AttributeGenerator<DeliveryMode, Order>() {
             public DeliveryMode generate(int index, AttributeConfiguration attributeConfiguration, Order instance) {
                 return new StoreDelivered();

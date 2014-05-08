@@ -2,9 +2,12 @@ package br.com.delogic.jnerator.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
@@ -16,6 +19,7 @@ import br.com.delogic.jnerator.impl.generator.BigIntegerAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.BooleanAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.ByteAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.CharacterAttributeGenerator;
+import br.com.delogic.jnerator.impl.generator.ComplexInheritedAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.ComplexTypeAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.ComplexTypeCollectionAttributeGenerator;
 import br.com.delogic.jnerator.impl.generator.DateAttributeGenerator;
@@ -112,20 +116,49 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
             return new ComplexTypeAttributeGenerator(field, instanceGenerators.get(type));
         }
 
+        AttributeGenerator<?, Object> attributeGenerator = tryAssinableGenerators(type);
+        if (attributeGenerator != null) {
+            return attributeGenerator;
+        }
+
         // return a attribute generation to throw an exception in case it's not
         // replaced after prepare phase
         return new UndefinedAttributeExceptionGenerator() {
             public Object generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
-                throw new IllegalArgumentException(String.format("Unfortunatelly we don't know how to create %s.%s of type %s "
-                    + "Configure this type to be created before %s or register an attribute generator for attribute %s.",
-                    field.getDeclaringClass(), field.getName(), firstValidValue(field.getGenericType(), field.getType()), field.getDeclaringClass(), field.getName()));
+                throw new IllegalArgumentException(String.format("Unfortunatelly we don't know how to create %s.%s of type %s."
+                    + " Configure this type to be created before %s or register an attribute generator for %s attribute.",
+                    field.getDeclaringClass(), field.getName(), firstValidValue(field.getGenericType(), field.getType()),
+                    field.getDeclaringClass(), field.getName()));
             }
         };
 
     }
 
+    /**
+     * Checks for attributes which may have inheritance and those subclasses may
+     * have already been created as attribute generators.
+     *
+     * @param type
+     * @return
+     */
+    private AttributeGenerator<?, Object> tryAssinableGenerators(Class<?> type) {
+
+        List<InstanceGenerator<?>> assinableGenerators = new ArrayList<InstanceGenerator<?>>();
+        for (Entry<Class<?>, InstanceGenerator<?>> entry : instanceGenerators.entrySet()) {
+            if (type.isAssignableFrom(entry.getKey())) {
+                assinableGenerators.add(entry.getValue());
+            }
+        }
+
+        if (!assinableGenerators.isEmpty()) {
+            return new ComplexInheritedAttributeGenerator(type, assinableGenerators);
+        }
+
+        return null;
+    }
+
     protected Object firstValidValue(Type genericType, Class<?> type) {
-        if (genericType != null){
+        if (genericType != null) {
             return genericType;
         } else {
             return type;
