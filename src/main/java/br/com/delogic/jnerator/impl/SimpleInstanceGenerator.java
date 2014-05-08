@@ -118,10 +118,67 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         RelationshipConfiguration relationshipConfiguration = relationshipConfigurationFactory.create(config.getField());
         InstanceGenerator<E> instanceGenerator = (InstanceGenerator<E>) jNerator.prepare(relationshipType);
 
-        AttributeGenerator<?, Object> attributeGenerator = attributeGeneratorFactory.create(config.getField(), instanceGenerator, relationshipConfiguration);
+        AttributeGenerator<?, Object> attributeGenerator = attributeGeneratorFactory.create(config.getField(), instanceGenerator,
+            relationshipConfiguration);
 
         this.attributesGenerator.put(attributeName, attributeGenerator);
 
         return instanceGenerator;
+    }
+
+    public <T> InstanceGenerator<T> setRelationshipAttributeGenerator(String attributeName, Class<? extends T>... relationshipTypes) {
+        AttributeConfiguration config = attributesConfiguration.get(attributeName);
+
+        RelationshipConfiguration relationshipConfiguration = relationshipConfigurationFactory.create(config.getField());
+
+        final List<InstanceGenerator<T>> allTypesGenerators = new ArrayList<InstanceGenerator<T>>();
+        for (Class<? extends T> relType : relationshipTypes) {
+            allTypesGenerators.add((InstanceGenerator<T>) jNerator.prepare(relType));
+        }
+
+        InstanceGenerator<T> proxyMultiGenerators = new InstanceGenerator<T>() {
+
+            public List<T> generate(int amount) {
+                List<T> ts = new ArrayList<T>();
+                for (InstanceGenerator<T> ig : allTypesGenerators) {
+                    ts.addAll(ig.generate(amount));
+                }
+                //let's shufle to avoid same results
+                Collections.shuffle(ts);
+                return ts;
+            }
+
+            public List<T> getCachedInstances() {
+                List<T> ts = new ArrayList<T>();
+                for (InstanceGenerator<T> ig : allTypesGenerators) {
+                    ts.addAll(ig.getCachedInstances());
+                }
+                return ts;
+            }
+
+            public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator) {
+                for (InstanceGenerator<T> ig : allTypesGenerators) {
+                    ig.setAttributeGenerator(attributeName, attributeGenerator);
+                }
+                return this;
+            }
+
+            public <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E> type) {
+                throw new UnsupportedOperationException(
+                    "Multi types relationship attribute generators cannot set other attribute generators");
+            }
+
+            public <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E>... types) {
+                throw new UnsupportedOperationException(
+                    "Multi types relationship attribute generators cannot set other attribute generators");
+            }
+        };
+
+        AttributeGenerator<?, Object> attributeGenerator = attributeGeneratorFactory.create(config.getField(), proxyMultiGenerators,
+            relationshipConfiguration);
+
+        this.attributesGenerator.put(attributeName, attributeGenerator);
+
+        return proxyMultiGenerators;
     }
 }

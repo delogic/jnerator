@@ -23,6 +23,7 @@ import br.com.delogic.jnerator.test.entities.City;
 import br.com.delogic.jnerator.test.entities.CreditCardPaymentMode;
 import br.com.delogic.jnerator.test.entities.DeliveryRegionByCity;
 import br.com.delogic.jnerator.test.entities.DeliveryRegionByZipCode;
+import br.com.delogic.jnerator.test.entities.HomeDelivered;
 import br.com.delogic.jnerator.test.entities.ItemProduct;
 import br.com.delogic.jnerator.test.entities.LocalClient;
 import br.com.delogic.jnerator.test.entities.OnlineClient;
@@ -73,26 +74,8 @@ public class JNeratorTest extends Assert {
 
         InstanceGenerator<Order> orderGenerator = jNerator.prepare(Order.class);
 
-        orderGenerator.setAttributeGenerator("paymentMode", new AttributeGenerator<PaymenteMode, Order>() {
-            private Random random = new Random();
-
-            public PaymenteMode generate(int index, AttributeConfiguration attributeConfiguration, Order instance) {
-
-                if (random.nextBoolean()) {
-                    CashPaymentMode mode = new CashPaymentMode();
-                    mode.setOrder(instance);
-                    mode.setChange(new BigDecimal(123));
-                    mode.setPresented(new BigDecimal(1234));
-                    return mode;
-                } else {
-                    CreditCardPaymentMode mode = new CreditCardPaymentMode();
-                    mode.setCreditCard(CreditCards.AMERICAN_EXPRESS);
-                    mode.setOrder(instance);
-                    return mode;
-                }
-
-            }
-        });
+        orderGenerator.setRelationshipAttributeGenerator("deliveryMode", StoreDelivered.class, HomeDelivered.class);
+        orderGenerator.setRelationshipAttributeGenerator("paymentMode", CashPaymentMode.class, CreditCardPaymentMode.class);
 
         orderGenerator.setAttributeGenerator("orderItens", new AttributeGenerator<Set<ItemProduct>, Order>() {
             public Set<ItemProduct> generate(int index, AttributeConfiguration attributeConfiguration, final Order order) {
@@ -122,10 +105,8 @@ public class JNeratorTest extends Assert {
             }
         });
 
-        orderGenerator.setRelationshipAttributeGenerator("deliveryMode", StoreDelivered.class);
-
-        List<Order> orders = orderGenerator.generate(amount);
-        assertHasData(orders);
+        List<Order> orders = orderGenerator.generate(amount * 1000);
+//        assertHasData(orders);
 
     }
 
