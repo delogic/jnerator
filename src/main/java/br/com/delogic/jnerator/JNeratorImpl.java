@@ -10,7 +10,7 @@ public class JNeratorImpl implements JNerator {
 
     public <E> InstanceGenerator<E> prepare(Class<E> type) {
         SimpleInstanceGenerator<E> instanceGenerator = new SimpleInstanceGenerator<E>(type, new SimpleAttributeConfigurationFactory(),
-            attributeGeneratorFactory);
+            attributeGeneratorFactory, this);
         attributeGeneratorFactory.addInstanceGenerator(instanceGenerator, type);
         return instanceGenerator;
     }

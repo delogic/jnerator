@@ -20,9 +20,7 @@ import br.com.delogic.jnerator.test.entities.Address;
 import br.com.delogic.jnerator.test.entities.CashPaymentMode;
 import br.com.delogic.jnerator.test.entities.Category;
 import br.com.delogic.jnerator.test.entities.City;
-import br.com.delogic.jnerator.test.entities.Client;
 import br.com.delogic.jnerator.test.entities.CreditCardPaymentMode;
-import br.com.delogic.jnerator.test.entities.DeliveryMode;
 import br.com.delogic.jnerator.test.entities.DeliveryRegionByCity;
 import br.com.delogic.jnerator.test.entities.DeliveryRegionByZipCode;
 import br.com.delogic.jnerator.test.entities.ItemProduct;
@@ -124,18 +122,7 @@ public class JNeratorTest extends Assert {
             }
         });
 
-        //
-        orderGenerator.setAttributeGenerator("deliveryMode", new AttributeGenerator<DeliveryMode, Order>() {
-            public DeliveryMode generate(int index, AttributeConfiguration attributeConfiguration, Order instance) {
-                return new StoreDelivered();
-            }
-        });
-
-        orderGenerator.setAttributeGenerator("additionals", new AttributeGenerator<List<AdditionalOrderItem>, Order>() {
-            public List<AdditionalOrderItem> generate(int index, AttributeConfiguration attributeConfiguration, Order instance) {
-                return jNerator.prepare(AdditionalOrderItem.class).generate(10);
-            }
-        });
+        orderGenerator.setRelationshipAttributeGenerator("deliveryMode", StoreDelivered.class);
 
         List<Order> orders = orderGenerator.generate(amount);
         assertHasData(orders);

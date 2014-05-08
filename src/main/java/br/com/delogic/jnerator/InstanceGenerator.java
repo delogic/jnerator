@@ -10,4 +10,6 @@ public interface InstanceGenerator<T> {
 
     <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator);
 
+    <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E> type);
+
 }

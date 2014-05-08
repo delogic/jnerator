@@ -13,7 +13,9 @@ import br.com.delogic.jnerator.AttributeConfigurationFactory;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.AttributeGeneratorFactory;
 import br.com.delogic.jnerator.InstanceGenerator;
+import br.com.delogic.jnerator.JNerator;
 import br.com.delogic.jnerator.exception.JNeratorException;
+import br.com.delogic.jnerator.impl.generator.ProvidedAttributeGenerator;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
@@ -25,10 +27,12 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     private final Map<String, AttributeGenerator<?, Object>> attributesGenerator;
     private final Class<T>                                   type;
     private List<T>                                          cachedInstances;
+    private final JNerator                                   jNerator;
 
     public SimpleInstanceGenerator(Class<T> type, AttributeConfigurationFactory attributeConfigurationFactory,
-        AttributeGeneratorFactory attributeGeneratorFactory) {
+        AttributeGeneratorFactory attributeGeneratorFactory, JNerator jNerator) {
         this.type = type;
+        this.jNerator = jNerator;
         this.attributesConfiguration = asMap(attributeConfigurationFactory.create(type));
         this.attributesGenerator = new HashMap<String, AttributeGenerator<?, Object>>();
 
@@ -100,6 +104,22 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator) {
         attributesGenerator.put(attributeName, (AttributeGenerator<?, Object>) attributeGenerator);
         return this;
+    }
+
+    public <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E> relationshipType) {
+        AttributeConfiguration config = attributesConfiguration.get(attributeName);
+
+        final InstanceGenerator<E> instanceGenerator = (InstanceGenerator<E>) jNerator.prepare(relationshipType);
+        AttributeGenerator<E, T> attributeGenerator = new AttributeGenerator<E, T>() {
+            public E generate(int index, AttributeConfiguration attributeConfiguration, T instance) {
+                instanceGenerator.setAttributeGenerator("order", new ProvidedAttributeGenerator(instance));
+                return instanceGenerator.generate(1).get(0);
+            }
+        };
+
+        this.attributesGenerator.put(attributeName, (AttributeGenerator<?, Object>) attributeGenerator);
+
+        return instanceGenerator;
     }
 
 }
