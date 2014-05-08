@@ -109,6 +109,8 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     public <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E> relationshipType) {
         AttributeConfiguration config = attributesConfiguration.get(attributeName);
 
+
+
         final InstanceGenerator<E> instanceGenerator = (InstanceGenerator<E>) jNerator.prepare(relationshipType);
         AttributeGenerator<E, T> attributeGenerator = new AttributeGenerator<E, T>() {
             public E generate(int index, AttributeConfiguration attributeConfiguration, T instance) {
