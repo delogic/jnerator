@@ -1,11 +1,7 @@
 package br.com.delogic.jnerator;
 
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -13,7 +9,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.com.delogic.jnerator.impl.generator.ProvidedAttributeGenerator;
 import br.com.delogic.jnerator.test.entities.Additional;
 import br.com.delogic.jnerator.test.entities.AdditionalOrderItem;
 import br.com.delogic.jnerator.test.entities.Address;
@@ -29,7 +24,6 @@ import br.com.delogic.jnerator.test.entities.LocalClient;
 import br.com.delogic.jnerator.test.entities.OnlineClient;
 import br.com.delogic.jnerator.test.entities.OnlineClientAddress;
 import br.com.delogic.jnerator.test.entities.Order;
-import br.com.delogic.jnerator.test.entities.PaymenteMode;
 import br.com.delogic.jnerator.test.entities.PhoneClient;
 import br.com.delogic.jnerator.test.entities.Product;
 import br.com.delogic.jnerator.test.entities.ProductOrderItem;
@@ -39,7 +33,6 @@ import br.com.delogic.jnerator.test.entities.TenentAddress;
 import br.com.delogic.jnerator.test.entities.TenentPaymentsAccepted;
 import br.com.delogic.jnerator.test.entities.TenentStorePersonalization;
 import br.com.delogic.jnerator.test.entities.TenentWorkingHours;
-import br.com.delogic.jnerator.test.entities.enums.CreditCards;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class JNeratorTest extends Assert {
@@ -74,39 +67,16 @@ public class JNeratorTest extends Assert {
 
         InstanceGenerator<Order> orderGenerator = jNerator.prepare(Order.class);
 
-        orderGenerator.setRelationshipAttributeGenerator("deliveryMode", StoreDelivered.class, HomeDelivered.class);
+        orderGenerator.setRelationshipAttributeGenerator("deliveryMode", HomeDelivered.class, StoreDelivered.class);
         orderGenerator.setRelationshipAttributeGenerator("paymentMode", CashPaymentMode.class, CreditCardPaymentMode.class);
 
-        orderGenerator.setAttributeGenerator("orderItens", new AttributeGenerator<Set<ItemProduct>, Order>() {
-            public Set<ItemProduct> generate(int index, AttributeConfiguration attributeConfiguration, final Order order) {
-                return new HashSet<ItemProduct>(
-                    jNerator.prepare(ItemProduct.class)
-                        .setAttributeGenerator("order", new ProvidedAttributeGenerator<Order, ItemProduct>(order))
-                        .setAttributeGenerator("products", new AttributeGenerator<List<ProductOrderItem>, ItemProduct>() {
-                            public List<ProductOrderItem> generate(int index, AttributeConfiguration attributeConfiguration,
-                                ItemProduct instance) {
-                                return jNerator
-                                    .prepare(ProductOrderItem.class)
-                                    .setAttributeGenerator("itemProduct",
-                                        new ProvidedAttributeGenerator<ItemProduct, ProductOrderItem>(instance)).generate(10);
-                            }
-                        })
-                        .setAttributeGenerator("additionals", new AttributeGenerator<List<AdditionalOrderItem>, ItemProduct>() {
-                            public List<AdditionalOrderItem> generate(int index, AttributeConfiguration attributeConfiguration,
-                                final ItemProduct itemProduct) {
-                                return jNerator
-                                    .prepare(AdditionalOrderItem.class)
-                                    .setAttributeGenerator("itemProduct",
-                                        new ProvidedAttributeGenerator<ItemProduct, AdditionalOrderItem>(itemProduct))
-                                    .generate(10);
-                            }
-                        })
-                        .generate(10));
-            }
-        });
+        InstanceGenerator<ItemProduct> itemProductsGenerators = orderGenerator
+            .setRelationshipAttributeGenerator("orderItens", ItemProduct.class);
+        itemProductsGenerators.setRelationshipAttributeGenerator("additionals", AdditionalOrderItem.class);
+        itemProductsGenerators.setRelationshipAttributeGenerator("products", ProductOrderItem.class);
 
-        List<Order> orders = orderGenerator.generate(amount * 1000);
-//        assertHasData(orders);
+        List<Order> orders = orderGenerator.generate(amount);
+        assertHasData(orders);
 
     }
 

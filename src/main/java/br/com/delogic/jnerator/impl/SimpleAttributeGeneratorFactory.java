@@ -180,7 +180,7 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
         instanceGenerators.put(type, instanceGenerator);
     }
 
-    public <O> AttributeGenerator<?, Object> create(Field field, final InstanceGenerator<O> generator,
+    public <O> AttributeGenerator<?, Object> create(final Field field, final InstanceGenerator<O> generator,
         final RelationshipConfiguration relationshipConfiguration) {
 
         if (relationshipConfiguration.getRelationshipType() == RelationshipType.ONE_TO_ONE) {
@@ -197,6 +197,23 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
                 }
             };
 
+        }
+
+        if (relationshipConfiguration.getRelationshipType() == RelationshipType.ONE_TO_MANY) {
+            // when the attribute is a collection
+            if (Collection.class.isAssignableFrom(field.getType())) {
+                // if is a collection of objects
+                return new ComplexTypeCollectionAttributeGenerator(field, generator){
+                    @Override
+                    public Collection<?> generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+                        generator.setAttributeGenerator(relationshipConfiguration.getOwnedOwnerAttributeName(), new ProvidedAttributeGenerator<Object, O>(instance));
+                        Collection<Object> collection = createCollection(field);
+                        collection.addAll(generator.generate(10));
+                        return collection;
+
+                    }
+                };
+            }
         }
 
         throw new IllegalArgumentException(String.format("Could not create Generator for field %s", field));
