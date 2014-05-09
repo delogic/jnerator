@@ -23,40 +23,51 @@ List<YourType> objectsCreated = jNerator.prepare(YourType.class).generate(howMan
 
 And that's all you'll ever need to create all the classes below: (the classes can be found inside the testing packages).
 
-* first we create the owner of the cafeteria
+first we create the owner of the cafeteria
+
 jNerator.prepare(Tenent.class).generate(amount));                     
 
-* create the categories for the products
+create the categories for the products
+
 jNerator.prepare(Category.class).generate(amount));                   
 
-* create the products
+create the products
+
 jNerator.prepare(Product.class).generate(amount));                    
 
-* create additionals for products
+create additionals for products
+
 jNerator.prepare(Additional.class).generate(amount));                 
 
 Now you want to create orders, so you can simulate the workflow:
 
-* create the instance generator for the orders
+create the instance generator for the orders
+
 InstanceGenerator<Order> orderGenerator = jNerator.prepare(Order.class);
 
-* configure how the relationship between order and delivery mode can be done
+configure how the relationship between order and delivery mode can be done
+
 orderGenerator.setRelationshipAttributeGenerator("deliveryMode", HomeDelivered.class, StoreDelivered.class);
 
-* configure how the relationship between order and payment mode can be done
+configure how the relationship between order and payment mode can be done
+
 orderGenerator.setRelationshipAttributeGenerator("paymentMode", CashPaymentMode.class, CreditCardPaymentMode.class);
 
-* configure how the relationship between order and itemProducts can be done
+configure how the relationship between order and itemProducts can be done
+
 InstanceGenerator<ItemProduct> itemProductsGenerators = orderGenerator
 	.setRelationshipAttributeGenerator("orderItens", ItemProduct.class);
 	
-* configure how the relationship between item product and additional can be done
+configure how the relationship between item product and additional can be done
+
 itemProductsGenerators.setRelationshipAttributeGenerator("additionals", AdditionalOrderItem.class);
 
-* configure how the relationship between item product and product order item can be done
+configure how the relationship between item product and product order item can be done
+
 itemProductsGenerators.setRelationshipAttributeGenerator("products", ProductOrderItem.class);
 
-* and that's it, now you have how many orders you might want!
+and that's it, now you have how many orders you might want!
+
 List<Order> orders = orderGenerator.generate(amount);
 
 
@@ -85,7 +96,7 @@ Collections\Arrays of Complex Attribute Types
 * Collections [Collection, List, Set and subtypes]
 * Arrays [uni-dimention]
 
-Relationship Attribute Types - Bidirectional relationship
+Bidirectional Relationship Attribute Types
 -----------
 * One-to-one
 * One-to-many
