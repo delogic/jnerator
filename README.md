@@ -13,22 +13,20 @@ Examples and Samples
 --------
 You can use the our test cases as examples, but let's use the context of an app to manage a cafeteria. If you need to generate data, probably you'd have objects like Product, Order, Client, Category, Additional, etc. Check below how these entities can be generated easily.
 
-To start generating first instantiate the jNerator you want:
+* To start generating first instantiate the jNerator you want:
 
 JNerator jNerator  = new JNeratorImpl();
 
-Then prepare and generate!
+* Then prepare and generate!
 
 List<YourType> objectsCreated = jNerator.prepare(YourType.class).generate(howManyYouWant);
 
 And that's all you'll ever need to create all the classes below: (the classes can be found inside the testing packages).
 
 first we create the owner of the cafeteria
-
 jNerator.prepare(Tenent.class).generate(amount));                     
 
-create the categories for the products
-
+//create the categories for the products
 jNerator.prepare(Category.class).generate(amount));                   
 
 create the products
@@ -105,4 +103,4 @@ Bidirectional Relationship Attribute Types
 
 To configure how the relationship objects must be created register an attributeGenerator or relationshipAttributeGenerator for your instance generator.
 
-If you need more information please contacts us celio@delogic.com.br
+If you need more information please contact us celio@delogic.com.br
