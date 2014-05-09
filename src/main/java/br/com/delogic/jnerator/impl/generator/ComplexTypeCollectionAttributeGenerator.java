@@ -36,7 +36,7 @@ public class ComplexTypeCollectionAttributeGenerator implements AttributeGenerat
     }
 
     @SuppressWarnings("unchecked")
-    <E> Collection<E> createCollection(Field field) {
+    protected <E> Collection<E> createCollection(Field field) {
 
         Class<Collection<E>> type = (Class<Collection<E>>) field.getType();
 
