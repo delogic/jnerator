@@ -14,4 +14,6 @@ public interface InstanceGenerator<T> {
 
     <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E>... types);
 
+    InstanceGenerator<T> doNotGenerateValuesFor(String... attributeNames);
+
 }

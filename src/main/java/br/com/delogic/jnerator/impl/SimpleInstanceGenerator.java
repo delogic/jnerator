@@ -172,6 +172,11 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
                 throw new UnsupportedOperationException(
                     "Multi types relationship attribute generators cannot set other attribute generators");
             }
+
+            public InstanceGenerator<T> doNotGenerateValuesFor(String... attributeNames) {
+                throw new UnsupportedOperationException(
+                    "Multi types relationship attribute generators cannot set this parameter");
+            }
         };
 
         AttributeGenerator<?, Object> attributeGenerator = attributeGeneratorFactory.create(config.getField(), proxyMultiGenerators,
@@ -181,4 +186,13 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
         return proxyMultiGenerators;
     }
+
+    public InstanceGenerator<T> doNotGenerateValuesFor(String... attributeNames) {
+        for (String atr:attributeNames){
+            attributesConfiguration.remove(atr);
+            attributesGenerator.remove(atr);
+        }
+        return this;
+    }
+
 }
