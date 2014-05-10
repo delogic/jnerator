@@ -38,7 +38,7 @@ import br.com.delogic.jnerator.util.ReflectionUtils;
 public class JNeratorTest extends Assert {
 
     private JNerator jNerator;
-    private int      amount = 100 * 200;
+    private int      amount = 100;
 
     @Before
     public void init() {
