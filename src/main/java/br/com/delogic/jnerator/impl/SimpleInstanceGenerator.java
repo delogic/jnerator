@@ -61,6 +61,11 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
         List<T> instances = new ArrayList<T>();
 
+        int displayedExecution = 0;
+        int currentAmount = 0;
+
+        if (amount > 1000) System.out.println(type);
+
         for (int index = 1; index <= amount; index++) {
 
             T instance = (T) ReflectionUtils.instantiate(type);
@@ -68,6 +73,12 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
             populateInstance(instance, index);
 
             instances.add(instance);
+
+            if (amount > 1000 && (currentAmount = (int) (((float) index / amount) * 100)) > displayedExecution) {
+                String line = "" + currentAmount + "%\r";
+                System.out.print(line);
+                displayedExecution = currentAmount;
+            }
 
         }
 
@@ -143,7 +154,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
                 for (InstanceGenerator<T> ig : allTypesGenerators) {
                     ts.addAll(ig.generate(amount));
                 }
-                //let's shufle to avoid same results
+                // let's shufle to avoid same results
                 Collections.shuffle(ts);
                 return ts;
             }
@@ -188,7 +199,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     }
 
     public InstanceGenerator<T> doNotGenerateValuesFor(String... attributeNames) {
-        for (String atr:attributeNames){
+        for (String atr : attributeNames) {
             attributesConfiguration.remove(atr);
             attributesGenerator.remove(atr);
         }

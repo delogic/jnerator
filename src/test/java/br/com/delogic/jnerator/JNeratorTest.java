@@ -38,7 +38,7 @@ import br.com.delogic.jnerator.util.ReflectionUtils;
 public class JNeratorTest extends Assert {
 
     private JNerator jNerator;
-    private int      amount = 100;
+    private int      amount = 100 * 200;
 
     @Before
     public void init() {
@@ -95,7 +95,7 @@ public class JNeratorTest extends Assert {
                     throw new RuntimeException("Error when trying to get field value for assert", e);
                 }
             }
-            toString(obj);
+//            toString(obj);
         }
     }
 
