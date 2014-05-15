@@ -4,10 +4,14 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import br.com.delogic.jfunk.Each;
+import br.com.delogic.jfunk.ForEach;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeConfigurationFactory;
 import br.com.delogic.jnerator.AttributeGenerator;
@@ -31,6 +35,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     private final JNerator                                   jNerator;
     private final RelationshipConfigurationFactory           relationshipConfigurationFactory;
     private final AttributeGeneratorFactory                  attributeGeneratorFactory;
+    private final Set<String>                                ignoredAttributes;
 
     public SimpleInstanceGenerator(Class<T> type, AttributeConfigurationFactory attributeConfigurationFactory,
         AttributeGeneratorFactory attributeGeneratorFactory, RelationshipConfigurationFactory relationshipConfigurationFactory,
@@ -41,6 +46,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         this.attributeGeneratorFactory = attributeGeneratorFactory;
         this.attributesConfiguration = asMap(attributeConfigurationFactory.create(type));
         this.attributesGenerator = new HashMap<String, AttributeGenerator<?, Object>>();
+        this.ignoredAttributes = new HashSet<String>();
 
         for (Entry<String, AttributeConfiguration> attributeConfiguration : attributesConfiguration.entrySet()) {
             AttributeGenerator<?, Object> generator = attributeGeneratorFactory.create(attributeConfiguration.getValue().getField(), this);
@@ -60,6 +66,8 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     public List<T> generate(int amount) {
 
         List<T> instances = new ArrayList<T>();
+
+        removeIgnoredAttributes();
 
         int displayedExecution = 0;
         int currentAmount = 0;
@@ -86,6 +94,15 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
         return instances;
 
+    }
+
+    private void removeIgnoredAttributes() {
+        ForEach.element(ignoredAttributes, new Each<String>() {
+            public void each(String element, int arg1) {
+                attributesConfiguration.remove(element);
+                attributesGenerator.remove(element);
+            }
+        });
     }
 
     void populateInstance(T instance, int index) {
@@ -184,7 +201,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
                     "Multi types relationship attribute generators cannot set other attribute generators");
             }
 
-            public InstanceGenerator<T> doNotGenerateValuesFor(String... attributeNames) {
+            public InstanceGenerator<T> doNotGenerateFor(String... attributeNames) {
                 throw new UnsupportedOperationException(
                     "Multi types relationship attribute generators cannot set this parameter");
             }
@@ -198,10 +215,9 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         return proxyMultiGenerators;
     }
 
-    public InstanceGenerator<T> doNotGenerateValuesFor(String... attributeNames) {
+    public InstanceGenerator<T> doNotGenerateFor(String... attributeNames) {
         for (String atr : attributeNames) {
-            attributesConfiguration.remove(atr);
-            attributesGenerator.remove(atr);
+            ignoredAttributes.add(atr);
         }
         return this;
     }

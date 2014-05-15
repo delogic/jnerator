@@ -4,4 +4,6 @@ public interface JNerator {
 
     <E> InstanceGenerator<E> prepare(Class<E> type);
 
+    JNerator doNotGenerateFor(String... attributeNames);
+
 }
