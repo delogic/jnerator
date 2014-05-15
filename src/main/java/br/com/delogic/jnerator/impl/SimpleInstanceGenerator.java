@@ -66,7 +66,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
         if (amount > 1000) System.out.println(type);
 
-        for (int index = 1; index <= amount; index++) {
+        for (int index = 0; index < amount; index++) {
 
             T instance = (T) ReflectionUtils.instantiate(type);
 
