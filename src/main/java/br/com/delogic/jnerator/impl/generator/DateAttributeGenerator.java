@@ -4,11 +4,12 @@ import java.util.Date;
 
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
+import br.com.delogic.jnerator.util.RandomUtil;
 
 public class DateAttributeGenerator implements AttributeGenerator<Date, Object> {
 
     public Date generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
-        return new Date();
+        return RandomUtil.getDateBetween(1);
     }
 
 }
