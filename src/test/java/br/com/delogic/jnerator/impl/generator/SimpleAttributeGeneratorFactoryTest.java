@@ -90,7 +90,7 @@ public class SimpleAttributeGeneratorFactoryTest extends Assert {
     }
 
     @SuppressWarnings("unchecked")
-    private <E extends AttributeGenerator<?, Object>> void assertFactoryField(Class<E> attributeGeneratorType, String fieldName) {
+    private <E extends AttributeGenerator<?>> void assertFactoryField(Class<E> attributeGeneratorType, String fieldName) {
         Field field = getLocalField(fieldName);
         assertNotNull("There's no field " + field, field);
 

@@ -5,7 +5,7 @@ import java.util.Random;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 
-public class BooleanAttributeGenerator implements AttributeGenerator<Boolean, Object> {
+public class BooleanAttributeGenerator implements AttributeGenerator<Boolean> {
 
     private Random random = new Random();
 

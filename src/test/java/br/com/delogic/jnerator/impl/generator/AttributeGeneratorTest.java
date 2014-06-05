@@ -129,7 +129,7 @@ public class AttributeGeneratorTest extends Assert {
         return field;
     }
 
-    private <E> void testAttributeGeneration(AttributeGenerator<E,Object> attributeGenerator, String fieldName){
+    private <E> void testAttributeGeneration(AttributeGenerator<E> attributeGenerator, String fieldName){
         for (int i = 0; i < 1000; i++){
             Object val = attributeGenerator.generate(i, new AttributeConfiguration(fieldName, getLocalField(fieldName)), new Object());
             assertNotNull(val);

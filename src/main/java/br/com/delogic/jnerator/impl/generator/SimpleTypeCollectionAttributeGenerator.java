@@ -11,12 +11,12 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
-public class SimpleTypeCollectionAttributeGenerator implements AttributeGenerator<Collection<?>, Object> {
+public class SimpleTypeCollectionAttributeGenerator implements AttributeGenerator<Collection<?>> {
 
-    private final Field field;
-    private final AttributeGenerator<?, Object> simpleAttributeGenerator;
+    private final Field                 field;
+    private final AttributeGenerator<?> simpleAttributeGenerator;
 
-    public SimpleTypeCollectionAttributeGenerator(Field field, AttributeGenerator<?, Object> attributeGenerator) {
+    public SimpleTypeCollectionAttributeGenerator(Field field, AttributeGenerator<?> attributeGenerator) {
         this.field = field;
         this.simpleAttributeGenerator = attributeGenerator;
     }
@@ -25,7 +25,7 @@ public class SimpleTypeCollectionAttributeGenerator implements AttributeGenerato
 
         Collection<Object> collection = createCollection(field);
 
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 5; i++) {
             collection.add(simpleAttributeGenerator.generate(i, attributeConfiguration, instance));
         }
 
@@ -33,21 +33,22 @@ public class SimpleTypeCollectionAttributeGenerator implements AttributeGenerato
     }
 
     @SuppressWarnings("unchecked")
-    <E> Collection<E> createCollection(Field field){
+    <E> Collection<E> createCollection(Field field) {
 
         Class<Collection<E>> type = (Class<Collection<E>>) field.getType();
 
-        if (type.isInterface()){
+        if (type.isInterface()) {
 
-            if (List.class.isAssignableFrom(type)){
+            if (List.class.isAssignableFrom(type)) {
                 return new ArrayList<E>();
             }
 
-            if (Set.class.isAssignableFrom(type)){
+            if (Set.class.isAssignableFrom(type)) {
                 return new HashSet<E>();
             }
 
-            throw new IllegalArgumentException("Currently only List and Set are supported as Collection types. The following field is not supported:" + field);
+            throw new IllegalArgumentException(
+                "Currently only List and Set are supported as Collection types. The following field is not supported:" + field);
 
         }
 

@@ -1,7 +1,7 @@
 package br.com.delogic.jnerator;
 
-public interface AttributeGenerator<E, T> {
+public interface AttributeGenerator<E> {
 
-    E generate(int index, AttributeConfiguration attributeConfiguration, T instance);
+    E generate(int index, AttributeConfiguration attributeConfiguration, Object instance);
 
 }

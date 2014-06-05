@@ -6,12 +6,12 @@ import java.lang.reflect.Field;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 
-public class ArrayAttributeGenerator implements AttributeGenerator<Object, Object> {
+public class ArrayAttributeGenerator implements AttributeGenerator<Object> {
 
-    private Class<?>                           componentType;
-    private AttributeGenerator<?, Object> attributeGenerator;
+    private Class<?>              componentType;
+    private AttributeGenerator<?> attributeGenerator;
 
-    public ArrayAttributeGenerator(Field field, AttributeGenerator<?, Object> attributeGenerator) {
+    public ArrayAttributeGenerator(Field field, AttributeGenerator<?> attributeGenerator) {
         this.componentType = field.getType().getComponentType();
         this.attributeGenerator = attributeGenerator;
     }

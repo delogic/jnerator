@@ -7,7 +7,7 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.InstanceGenerator;
 
-public class ComplexInheritedAttributeGenerator implements AttributeGenerator<Object, Object> {
+public class ComplexInheritedAttributeGenerator implements AttributeGenerator<Object> {
 
     private final List<InstanceGenerator<?>> instanceGenerators;
     private Random                           random = new Random();

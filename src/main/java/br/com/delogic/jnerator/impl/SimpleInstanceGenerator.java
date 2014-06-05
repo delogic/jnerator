@@ -26,16 +26,16 @@ import br.com.delogic.jnerator.util.ReflectionUtils;
 public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
     // <AttributeName, AttributeConfiguration>
-    private final Map<String, AttributeConfiguration>        attributesConfiguration;
+    private final Map<String, AttributeConfiguration> attributesConfiguration;
 
     // <AttributeName, AttributeGenerator>
-    private final Map<String, AttributeGenerator<?, Object>> attributesGenerator;
-    private final Class<T>                                   type;
-    private List<T>                                          cachedInstances;
-    private final JNerator                                   jNerator;
-    private final RelationshipConfigurationFactory           relationshipConfigurationFactory;
-    private final AttributeGeneratorFactory                  attributeGeneratorFactory;
-    private final Set<String>                                ignoredAttributes;
+    private final Map<String, AttributeGenerator<?>>  attributesGenerator;
+    private final Class<T>                            type;
+    private List<T>                                   cachedInstances;
+    private final JNerator                            jNerator;
+    private final RelationshipConfigurationFactory    relationshipConfigurationFactory;
+    private final AttributeGeneratorFactory           attributeGeneratorFactory;
+    private final Set<String>                         ignoredAttributes;
 
     public SimpleInstanceGenerator(Class<T> type, AttributeConfigurationFactory attributeConfigurationFactory,
         AttributeGeneratorFactory attributeGeneratorFactory, RelationshipConfigurationFactory relationshipConfigurationFactory,
@@ -45,11 +45,11 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         this.relationshipConfigurationFactory = relationshipConfigurationFactory;
         this.attributeGeneratorFactory = attributeGeneratorFactory;
         this.attributesConfiguration = asMap(attributeConfigurationFactory.create(type));
-        this.attributesGenerator = new HashMap<String, AttributeGenerator<?, Object>>();
+        this.attributesGenerator = new HashMap<String, AttributeGenerator<?>>();
         this.ignoredAttributes = new HashSet<String>();
 
         for (Entry<String, AttributeConfiguration> attributeConfiguration : attributesConfiguration.entrySet()) {
-            AttributeGenerator<?, Object> generator = attributeGeneratorFactory.create(attributeConfiguration.getValue().getField(), this);
+            AttributeGenerator<?> generator = attributeGeneratorFactory.create(attributeConfiguration.getValue().getField(), this);
             attributesGenerator.put(attributeConfiguration.getValue().getName(), generator);
         }
 
@@ -109,7 +109,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
         for (Entry<String, AttributeConfiguration> config : attributesConfiguration.entrySet()) {
 
-            AttributeGenerator<?, Object> generator = attributesGenerator.get(config.getKey());
+            AttributeGenerator<?> generator = attributesGenerator.get(config.getKey());
 
             Object value = generator.generate(index, config.getValue(), instance);
 
@@ -135,8 +135,8 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         return cachedInstances;
     }
 
-    public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator) {
-        attributesGenerator.put(attributeName, (AttributeGenerator<?, Object>) attributeGenerator);
+    public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E> attributeGenerator) {
+        attributesGenerator.put(attributeName, (AttributeGenerator<?>) attributeGenerator);
         return this;
     }
 
@@ -146,7 +146,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         RelationshipConfiguration relationshipConfiguration = relationshipConfigurationFactory.create(config.getField());
         InstanceGenerator<E> instanceGenerator = (InstanceGenerator<E>) jNerator.prepare(relationshipType);
 
-        AttributeGenerator<?, Object> attributeGenerator = attributeGeneratorFactory.create(config.getField(), instanceGenerator,
+        AttributeGenerator<?> attributeGenerator = attributeGeneratorFactory.create(config.getField(), instanceGenerator,
             relationshipConfiguration);
 
         this.attributesGenerator.put(attributeName, attributeGenerator);
@@ -184,7 +184,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
                 return ts;
             }
 
-            public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator) {
+            public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E> attributeGenerator) {
                 for (InstanceGenerator<T> ig : allTypesGenerators) {
                     ig.setAttributeGenerator(attributeName, attributeGenerator);
                 }
@@ -207,7 +207,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
             }
         };
 
-        AttributeGenerator<?, Object> attributeGenerator = attributeGeneratorFactory.create(config.getField(), proxyMultiGenerators,
+        AttributeGenerator<?> attributeGenerator = attributeGeneratorFactory.create(config.getField(), proxyMultiGenerators,
             relationshipConfiguration);
 
         this.attributesGenerator.put(attributeName, attributeGenerator);

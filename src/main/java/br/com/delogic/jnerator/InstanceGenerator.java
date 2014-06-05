@@ -8,7 +8,7 @@ public interface InstanceGenerator<T> {
 
     List<T> getCachedInstances();
 
-    <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E, T> attributeGenerator);
+    <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E> attributeGenerator);
 
     <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E> type);
 

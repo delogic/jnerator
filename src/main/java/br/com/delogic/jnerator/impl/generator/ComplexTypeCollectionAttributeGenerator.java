@@ -13,7 +13,7 @@ import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.InstanceGenerator;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
-public class ComplexTypeCollectionAttributeGenerator implements AttributeGenerator<Collection<?>, Object> {
+public class ComplexTypeCollectionAttributeGenerator implements AttributeGenerator<Collection<?>> {
 
     private final Field                field;
     private final InstanceGenerator<?> instanceGenerator;

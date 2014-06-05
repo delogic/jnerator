@@ -7,7 +7,7 @@ import java.util.Random;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 
-public class EnumAttributeGenerator implements AttributeGenerator<Enum<?>, Object> {
+public class EnumAttributeGenerator implements AttributeGenerator<Enum<?>> {
 
     private List<?> enums;
     private Random  random;
