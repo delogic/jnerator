@@ -30,7 +30,11 @@ public class RandomUtilTest extends Assert {
         for (int i = 0; i < 10000000; i++) {
             Date futureRandomDate = RandomUtil.getDateTo(1);
             assertTrue(futureRandomDate.compareTo(new Date()) > 0);
-            assertTrue(futureRandomDate.compareTo(dayTo) < 0);
+            if (!(futureRandomDate.compareTo(dayTo) < 0 )){
+                System.out.println("Future date:" + futureRandomDate);
+                System.out.println("DayTo:" + dayTo);
+            }
+            assertTrue(futureRandomDate.compareTo(dayTo) <= 0);
 
             Date pastRandomDate = RandomUtil.getDateTo(-1);
             assertTrue(pastRandomDate.compareTo(dayFrom) > 0);
