@@ -6,7 +6,7 @@ import br.com.delogic.jnerator.AttributeGenerator;
 public class StringAttributeGenerator implements AttributeGenerator<String> {
 
     public String generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
-        return index + ":" + attributeConfiguration.getName();
+        return attributeConfiguration.getName() + " " + index;
     }
 
 }
