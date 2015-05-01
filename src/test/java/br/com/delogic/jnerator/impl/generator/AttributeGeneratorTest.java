@@ -12,7 +12,7 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 
-import br.com.delogic.jnerator.AttributeConfiguration;
+import br.com.delogic.jnerator.AttributeConfigurationImpl;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.impl.SimpleAttributeGeneratorFactory;
 import br.com.delogic.jnerator.util.ReflectionUtils;
@@ -131,7 +131,7 @@ public class AttributeGeneratorTest extends Assert {
 
     private <E> void testAttributeGeneration(AttributeGenerator<E> attributeGenerator, String fieldName){
         for (int i = 0; i < 1000; i++){
-            Object val = attributeGenerator.generate(i, new AttributeConfiguration(fieldName, getLocalField(fieldName)), new Object());
+            Object val = attributeGenerator.generate(i, new AttributeConfigurationImpl<E>(fieldName, getLocalField(fieldName), null), new Object());
             assertNotNull(val);
         }
     }

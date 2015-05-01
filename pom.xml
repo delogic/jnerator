@@ -3,14 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.delogic</groupId>
     <artifactId>jnerator</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>jnerator</name>
 
     <properties>
         <org.slf4j.version>1.7.5</org.slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
 
     <dependencies>
 

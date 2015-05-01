@@ -8,12 +8,17 @@ public interface InstanceGenerator<T> {
 
     List<T> getCachedInstances();
 
-    <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E> attributeGenerator);
+    AttributeConfiguration<T> forAttr(String attributeName);
 
-    <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E> type);
+    <E> InstanceGenerator<T> setAttributeGenerator(String attributeName,
+        AttributeGenerator<E> attributeGenerator);
 
-    <E> InstanceGenerator<E> setRelationshipAttributeGenerator(String attributeName, Class<? extends E>... types);
+    <R> InstanceGenerator<R> forRelationship(String
+        attributeName, Class<? extends R> type);
 
-    InstanceGenerator<T> doNotGenerateFor(String... attributeNames);
+    <R> InstanceGenerator<R> forRelationship(String
+        attributeName, List<Class<? extends R>> types);
+
+    InstanceGenerator<T> doNotGenerateAttribute(String... attributeNames);
 
 }

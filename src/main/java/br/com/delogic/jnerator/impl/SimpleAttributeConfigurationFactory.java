@@ -4,20 +4,21 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeConfigurationFactory;
+import br.com.delogic.jnerator.AttributeConfigurationImpl;
+import br.com.delogic.jnerator.InstanceGenerator;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class SimpleAttributeConfigurationFactory implements AttributeConfigurationFactory {
 
-    public List<AttributeConfiguration> create(Class<?> type) {
+    public <T> List<AttributeConfigurationImpl<T>> create(Class<?> type, InstanceGenerator<T> instanceGenerator) {
 
         List<Field> fields = ReflectionUtils.getAllDeclaredFields(type);
 
-        List<AttributeConfiguration> attrs = new ArrayList<AttributeConfiguration>();
+        List<AttributeConfigurationImpl<T>> attrs = new ArrayList<AttributeConfigurationImpl<T>>();
 
         for (Field field : fields) {
-            attrs.add(new AttributeConfiguration(field.getName(), field));
+            attrs.add(new AttributeConfigurationImpl<T>(field.getName(), field, instanceGenerator));
         }
 
         return attrs;

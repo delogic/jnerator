@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface AttributeConfigurationFactory {
 
-    List<AttributeConfiguration> create(Class<?> type);
+    <T> List<AttributeConfigurationImpl<T>> create(Class<?> type, InstanceGenerator<T> instanceGenerator);
 
 }

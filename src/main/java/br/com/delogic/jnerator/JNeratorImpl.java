@@ -24,12 +24,12 @@ public class JNeratorImpl implements JNerator {
 
         attributeGeneratorFactory.addInstanceGenerator(instanceGenerator, type);
 
-        instanceGenerator.doNotGenerateFor(ignoredAttributes.toArray(new String[ignoredAttributes.size()]));
+        instanceGenerator.doNotGenerateAttribute(ignoredAttributes.toArray(new String[ignoredAttributes.size()]));
 
         return instanceGenerator;
     }
 
-    public JNerator doNotGenerateFor(String... attributeNames) {
+    public JNerator doNotGenerateForAttributes(String... attributeNames) {
         ignoredAttributes.addAll(Arrays.asList(attributeNames));
         return this;
     }

@@ -1,6 +1,7 @@
 package br.com.delogic.jnerator;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -45,8 +46,20 @@ public class JNeratorTest extends Assert {
         jNerator = new JNeratorImpl();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void test() {
+
+//        Collection<Address> addresses = null;
+//        jNerator.prepare(Tenent.class).forAttr("address").use(addresses)
+//            .forAttr("abc").use("entity")
+//            .forAttr("abc").use(addresses)
+//            .forAttr("abc").use("entity1", "entity2")
+//            .forAttr("abc").use(10L, 20d)
+//            .forAttr("abc").useSequentially("entity1", "entity2")
+//            .forAttr("abc").useLoremIpsum(500)
+//            .forRelationship("cars", Arrays.asList(HomeDelivered.class, StoreDelivered.class))
+//            .generate(50);
 
         assertHasData(jNerator.prepare(Tenent.class).generate(amount));
         assertHasData(jNerator.prepare(Category.class).generate(amount));
@@ -67,13 +80,13 @@ public class JNeratorTest extends Assert {
 
         InstanceGenerator<Order> orderGenerator = jNerator.prepare(Order.class);
 
-        orderGenerator.setRelationshipAttributeGenerator("deliveryMode", HomeDelivered.class, StoreDelivered.class);
-        orderGenerator.setRelationshipAttributeGenerator("paymentMode", CashPaymentMode.class, CreditCardPaymentMode.class);
+        orderGenerator.forRelationship("deliveryMode", Arrays.asList(HomeDelivered.class, StoreDelivered.class));
+        orderGenerator.forRelationship("paymentMode", Arrays.asList(CashPaymentMode.class, CreditCardPaymentMode.class));
 
         InstanceGenerator<ItemProduct> itemProductsGenerators = orderGenerator
-            .setRelationshipAttributeGenerator("orderItens", ItemProduct.class);
-        itemProductsGenerators.setRelationshipAttributeGenerator("additionals", AdditionalOrderItem.class);
-        itemProductsGenerators.setRelationshipAttributeGenerator("products", ProductOrderItem.class);
+            .forRelationship("orderItens", ItemProduct.class);
+        itemProductsGenerators.forRelationship("additionals", AdditionalOrderItem.class);
+        itemProductsGenerators.forRelationship("products", ProductOrderItem.class);
 
         List<Order> orders = orderGenerator.generate(amount);
         assertHasData(orders);
@@ -95,7 +108,7 @@ public class JNeratorTest extends Assert {
                     throw new RuntimeException("Error when trying to get field value for assert", e);
                 }
             }
-//            toString(obj);
+            // toString(obj);
         }
     }
 

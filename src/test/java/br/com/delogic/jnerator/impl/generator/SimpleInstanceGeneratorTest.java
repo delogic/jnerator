@@ -28,7 +28,7 @@ public class SimpleInstanceGeneratorTest extends Assert {
             assertNotNull(c.getTenent());
         }
 
-        for (Category c : jNerator.prepare(Category.class).doNotGenerateFor("id", "name", "tenent").generate(10)) {
+        for (Category c : jNerator.prepare(Category.class).doNotGenerateAttribute("id", "name", "tenent").generate(10)) {
             assertNull(c.getId());
             assertNull(c.getName());
             assertNotNull(c.getCompositions());
@@ -42,7 +42,7 @@ public class SimpleInstanceGeneratorTest extends Assert {
     public void testDoNotGenerateOnJNerator() {
 
         JNerator jNerator = new JNeratorImpl();
-        jNerator.doNotGenerateFor("id", "name", "tenent");
+        jNerator.doNotGenerateForAttributes("id", "name", "tenent");
 
         for (Tenent p : jNerator.prepare(Tenent.class).generate(10)) {
             assertNull(p.getId());

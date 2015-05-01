@@ -9,7 +9,12 @@ import br.com.delogic.jnerator.util.Util;
 
 public class ProvidedAttributeGenerator<E> implements AttributeGenerator<E> {
 
+    private E       element;
     private List<E> elements;
+
+    public ProvidedAttributeGenerator(E element) {
+        this.element = element;
+    }
 
     public ProvidedAttributeGenerator(E... elements) {
         this.elements = Arrays.asList(elements);
@@ -20,6 +25,9 @@ public class ProvidedAttributeGenerator<E> implements AttributeGenerator<E> {
     }
 
     public E generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+        if (element != null) {
+            return element;
+        }
         return elements.get(Util.validIndex(index, elements.size()));
     }
 
