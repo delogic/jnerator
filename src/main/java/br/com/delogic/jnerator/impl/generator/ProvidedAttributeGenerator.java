@@ -7,7 +7,7 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.util.Util;
 
-public class ProvidedAttributeGenerator<E> implements AttributeGenerator<E> {
+public class ProvidedAttributeGenerator<E> implements AttributeGenerator {
 
     private E       element;
     private List<E> elements;
@@ -24,7 +24,7 @@ public class ProvidedAttributeGenerator<E> implements AttributeGenerator<E> {
         this.elements = elements;
     }
 
-    public E generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> Object generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
         if (element != null) {
             return element;
         }

@@ -4,9 +4,9 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.util.Util;
 
-public class IntegerAttributeGenerator implements AttributeGenerator<Integer> {
+public class IntegerAttributeGenerator implements AttributeGenerator {
 
-    public Integer generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> Integer generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
         if (attributeConfiguration.getFrom() != null && attributeConfiguration.getTo() != null){
             int from = attributeConfiguration.getFrom().intValue(), to = attributeConfiguration.getTo().intValue();
             if (from >= to){

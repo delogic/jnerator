@@ -5,7 +5,7 @@ import java.util.Random;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 
-public class LoremIpsumAttributeGenerator implements AttributeGenerator<String> {
+public class LoremIpsumAttributeGenerator implements AttributeGenerator {
 
     private int    lenght;
     private Random random = new Random();
@@ -14,7 +14,7 @@ public class LoremIpsumAttributeGenerator implements AttributeGenerator<String> 
         this.lenght = lenght;
     }
 
-    public String generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> String generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
         int begin = random.nextInt(LOREM_IPSUM.length());
         StringBuilder sb = new StringBuilder(LOREM_IPSUM.substring(begin));
         while (sb.length() < lenght) {

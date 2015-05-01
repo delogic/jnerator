@@ -8,7 +8,7 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.InstanceGenerator;
 
-public class ComplexTypeAttributeGenerator implements AttributeGenerator<Object> {
+public class ComplexTypeAttributeGenerator implements AttributeGenerator {
 
     private final InstanceGenerator<?> instanceGenerator;
     private final Random               random = new Random();
@@ -17,7 +17,7 @@ public class ComplexTypeAttributeGenerator implements AttributeGenerator<Object>
         this.instanceGenerator = instanceGenerator;
     }
 
-    public Object generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> Object generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
         List<?> entitiesCached = instanceGenerator.getCachedInstances();
         return entitiesCached.get(random.nextInt(entitiesCached.size()));
     }

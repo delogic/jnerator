@@ -39,7 +39,7 @@ import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactory {
 
-    Map<String, AttributeGenerator<?>>  attributeGenerators = new HashMap<String, AttributeGenerator<?>>();
+    Map<String, AttributeGenerator>     attributeGenerators = new HashMap<String, AttributeGenerator>();
     Map<Class<?>, InstanceGenerator<?>> instanceGenerators  = new HashMap<Class<?>, InstanceGenerator<?>>();
 
     public SimpleAttributeGeneratorFactory() {
@@ -65,7 +65,7 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
         attributeGenerators.put("java.util.Date", new DateAttributeGenerator());
     }
 
-    public AttributeGenerator<?> create(final Field field, final InstanceGenerator<?> generator) {
+    public AttributeGenerator create(final Field field, final InstanceGenerator<?> generator) {
 
         final Class<?> type = field.getType();
 
@@ -117,7 +117,7 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
             return new ComplexTypeAttributeGenerator(field, instanceGenerators.get(type));
         }
 
-        AttributeGenerator<?> attributeGenerator = tryAssinableGenerators(type);
+        AttributeGenerator attributeGenerator = tryAssinableGenerators(type);
         if (attributeGenerator != null) {
             return attributeGenerator;
         }
@@ -125,7 +125,7 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
         // return a attribute generation to throw an exception in case it's not
         // replaced after prepare phase
         return new UndefinedAttributeExceptionGenerator() {
-            public Object generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+            public <T> Object generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
                 throw new IllegalArgumentException(String.format("Unfortunatelly we don't know how to create %s.%s of type %s."
                     + " Configure this type to be created before %s or register an attribute generator for %s attribute.",
                     field.getDeclaringClass(), field.getName(), firstValidValue(field.getGenericType(), field.getType()),
@@ -142,7 +142,7 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
      * @param type
      * @return
      */
-    private AttributeGenerator<?> tryAssinableGenerators(Class<?> type) {
+    private AttributeGenerator tryAssinableGenerators(Class<?> type) {
 
         List<InstanceGenerator<?>> assinableGenerators = new ArrayList<InstanceGenerator<?>>();
         for (Entry<Class<?>, InstanceGenerator<?>> entry : instanceGenerators.entrySet()) {
@@ -166,28 +166,27 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private AttributeGenerator<Enum<?>> registerAndReturnEnumAttributeGenerator(Class<?> type) {
+    private AttributeGenerator registerAndReturnEnumAttributeGenerator(Class<?> type) {
         if (!attributeGenerators.containsKey(type.getName())) {
             // if is a new type we create and add
             attributeGenerators.put(type.getName(), new EnumAttributeGenerator(type));
         }
 
-        return (AttributeGenerator<Enum<?>>) attributeGenerators.get(type.getName());
+        return attributeGenerators.get(type.getName());
     }
 
     public <E> void addInstanceGenerator(InstanceGenerator<E> instanceGenerator, Class<?> type) {
         instanceGenerators.put(type, instanceGenerator);
     }
 
-    public <O> AttributeGenerator<?> create(final Field field, final InstanceGenerator<O> generator,
+    public <O> AttributeGenerator create(final Field field, final InstanceGenerator<O> generator,
         final RelationshipConfiguration relationshipConfiguration) {
 
         if (relationshipConfiguration.getRelationshipType() == RelationshipType.ONE_TO_ONE) {
             // create a new attribute generator to generate the owned attribute
-            return new AttributeGenerator<Object>() {
+            return new AttributeGenerator() {
 
-                public Object generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+                public <T> Object generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
                     // when generating the owned attribute we provide the owner
                     // to complete the relationship
                     generator.setAttributeGenerator(relationshipConfiguration.getOwnedOwnerAttributeName(),
@@ -205,7 +204,7 @@ public class SimpleAttributeGeneratorFactory implements AttributeGeneratorFactor
                 // if is a collection of objects
                 return new ComplexTypeCollectionAttributeGenerator(field, generator) {
                     @Override
-                    public Collection<?> generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+                    public <T> Collection<?> generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
                         generator.setAttributeGenerator(relationshipConfiguration.getOwnedOwnerAttributeName(),
                             new ProvidedAttributeGenerator<Object>(instance));
                         Collection<Object> collection = createCollection(field);

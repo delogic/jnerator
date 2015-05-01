@@ -47,7 +47,7 @@ public class AttributeConfigurationImpl<T> implements AttributeConfiguration<T> 
         this.to = to;
     }
 
-    public <E> InstanceGenerator<T> use(AttributeGenerator<E> attributeGenerator) {
+    public InstanceGenerator<T> use(AttributeGenerator attributeGenerator) {
         instanceGenerator.setAttributeGenerator(name, attributeGenerator);
         return instanceGenerator;
     }
@@ -75,17 +75,15 @@ public class AttributeConfigurationImpl<T> implements AttributeConfiguration<T> 
         if (!Has.content(entities)) {
             throw new IllegalArgumentException("Collection of entities is empty");
         }
-        return instanceGenerator.setAttributeGenerator(name, new AttributeGenerator<E>() {
-            public E generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+        return instanceGenerator.setAttributeGenerator(name, new AttributeGenerator() {
+            public <TT> E generate(int index, AttributeConfiguration<TT> attributeConfiguration, Object instance) {
                 return entities[Util.validIndex(index, entities.length)];
             }
         });
     }
 
-    @SuppressWarnings("unchecked")
     public <E> InstanceGenerator<T> useLoremIpsum(int length) {
-        AttributeGenerator<E> gen = (AttributeGenerator<E>) new LoremIpsumAttributeGenerator(length);
-        return instanceGenerator.setAttributeGenerator(name, gen);
+        return instanceGenerator.setAttributeGenerator(name, new LoremIpsumAttributeGenerator(length));
     }
 
     public <N extends Number> InstanceGenerator<T> use(N from, N to) {

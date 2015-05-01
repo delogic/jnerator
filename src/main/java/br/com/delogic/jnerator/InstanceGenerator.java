@@ -11,7 +11,7 @@ public interface InstanceGenerator<T> {
     AttributeConfiguration<T> forAttr(String attributeName);
 
     <E> InstanceGenerator<T> setAttributeGenerator(String attributeName,
-        AttributeGenerator<E> attributeGenerator);
+        AttributeGenerator attributeGenerator);
 
     <R> InstanceGenerator<R> forRelationship(String
         attributeName, Class<? extends R> type);

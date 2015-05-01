@@ -5,11 +5,11 @@ import java.util.Random;
 import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 
-public class BooleanAttributeGenerator implements AttributeGenerator<Boolean> {
+public class BooleanAttributeGenerator implements AttributeGenerator {
 
     private Random random = new Random();
 
-    public Boolean generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> Boolean generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
         return random.nextBoolean();
     }
 

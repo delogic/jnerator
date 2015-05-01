@@ -13,7 +13,7 @@ import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.InstanceGenerator;
 import br.com.delogic.jnerator.util.ReflectionUtils;
 
-public class ComplexTypeCollectionAttributeGenerator implements AttributeGenerator<Collection<?>> {
+public class ComplexTypeCollectionAttributeGenerator implements AttributeGenerator {
 
     private final Field                field;
     private final InstanceGenerator<?> instanceGenerator;
@@ -24,7 +24,7 @@ public class ComplexTypeCollectionAttributeGenerator implements AttributeGenerat
         this.instanceGenerator = attributeGenerator;
     }
 
-    public Collection<?> generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> Collection<?> generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
 
         Collection<Object> collection = createCollection(field);
 

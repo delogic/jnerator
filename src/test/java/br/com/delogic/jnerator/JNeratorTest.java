@@ -50,16 +50,17 @@ public class JNeratorTest extends Assert {
     @Test
     public void test() {
 
-//        Collection<Address> addresses = null;
-//        jNerator.prepare(Tenent.class).forAttr("address").use(addresses)
-//            .forAttr("abc").use("entity")
-//            .forAttr("abc").use(addresses)
-//            .forAttr("abc").use("entity1", "entity2")
-//            .forAttr("abc").use(10L, 20d)
-//            .forAttr("abc").useSequentially("entity1", "entity2")
-//            .forAttr("abc").useLoremIpsum(500)
-//            .forRelationship("cars", Arrays.asList(HomeDelivered.class, StoreDelivered.class))
-//            .generate(50);
+        // Collection<Address> addresses = null;
+        // jNerator.prepare(Tenent.class).forAttr("address").use(addresses)
+        // .forAttr("abc").use("entity")
+        // .forAttr("abc").use(addresses)
+        // .forAttr("abc").use("entity1", "entity2")
+        // .forAttr("abc").use(10L, 20d)
+        // .forAttr("abc").useSequentially("entity1", "entity2")
+        // .forAttr("abc").useLoremIpsum(500)
+        // .forRelationship("cars", Arrays.asList(HomeDelivered.class,
+        // StoreDelivered.class))
+        // .generate(50);
 
         assertHasData(jNerator.prepare(Tenent.class).generate(amount));
         assertHasData(jNerator.prepare(Category.class).generate(amount));
@@ -108,7 +109,7 @@ public class JNeratorTest extends Assert {
                     throw new RuntimeException("Error when trying to get field value for assert", e);
                 }
             }
-            // toString(obj);
+            toString(obj);
         }
     }
 

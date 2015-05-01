@@ -6,9 +6,9 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.util.RandomUtil;
 
-public class DateAttributeGenerator implements AttributeGenerator<Date> {
+public class DateAttributeGenerator implements AttributeGenerator {
 
-    public Date generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> Date generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
         return RandomUtil.getDateBetween(1);
     }
 

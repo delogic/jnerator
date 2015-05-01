@@ -13,7 +13,7 @@ public interface AttributeConfiguration<T> {
 
     Number getTo();
 
-    <E> InstanceGenerator<T> use(AttributeGenerator<E> attributeGenerator);
+    InstanceGenerator<T> use(AttributeGenerator attributeGenerator);
 
     <E> InstanceGenerator<T> use(E entity);
 

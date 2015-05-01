@@ -4,7 +4,7 @@ import br.com.delogic.jnerator.AttributeConfiguration;
 import br.com.delogic.jnerator.AttributeGenerator;
 import br.com.delogic.jnerator.util.Util;
 
-public class StringAttributeGenerator implements AttributeGenerator<String> {
+public class StringAttributeGenerator implements AttributeGenerator {
 
     private String[][] values;
 
@@ -14,7 +14,7 @@ public class StringAttributeGenerator implements AttributeGenerator<String> {
 
     public StringAttributeGenerator() {}
 
-    public String generate(int index, AttributeConfiguration attributeConfiguration, Object instance) {
+    public <T> String generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
         if (values != null) {
             StringBuilder sb = new StringBuilder();
             for (String[] arr : values) {

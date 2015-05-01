@@ -30,7 +30,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     private final Map<String, AttributeConfigurationImpl<T>> attributesConfiguration;
 
     // <AttributeName, AttributeGenerator>
-    private final Map<String, AttributeGenerator<?>>         attributesGenerator;
+    private final Map<String, AttributeGenerator>            attributesGenerator;
     private final Class<T>                                   type;
     private List<T>                                          cachedInstances;
     private final JNerator                                   jNerator;
@@ -46,11 +46,11 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         this.relationshipConfigurationFactory = relationshipConfigurationFactory;
         this.attributeGeneratorFactory = attributeGeneratorFactory;
         this.attributesConfiguration = asMap(attributeConfigurationFactory.create(type, this));
-        this.attributesGenerator = new HashMap<String, AttributeGenerator<?>>();
+        this.attributesGenerator = new HashMap<String, AttributeGenerator>();
         this.ignoredAttributes = new HashSet<String>();
 
         for (Entry<String, AttributeConfigurationImpl<T>> attributeConfiguration : attributesConfiguration.entrySet()) {
-            AttributeGenerator<?> generator = attributeGeneratorFactory.create(attributeConfiguration.getValue().getField(), this);
+            AttributeGenerator generator = attributeGeneratorFactory.create(attributeConfiguration.getValue().getField(), this);
             attributesGenerator.put(attributeConfiguration.getValue().getName(), generator);
         }
 
@@ -110,7 +110,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
         for (Entry<String, AttributeConfigurationImpl<T>> config : attributesConfiguration.entrySet()) {
 
-            AttributeGenerator<?> generator = attributesGenerator.get(config.getKey());
+            AttributeGenerator generator = attributesGenerator.get(config.getKey());
 
             Object value = generator.generate(index, config.getValue(), instance);
 
@@ -136,8 +136,8 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         return cachedInstances;
     }
 
-    public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator<E> attributeGenerator) {
-        attributesGenerator.put(attributeName, (AttributeGenerator<?>) attributeGenerator);
+    public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator attributeGenerator) {
+        attributesGenerator.put(attributeName, attributeGenerator);
         return this;
     }
 
@@ -148,90 +148,12 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         RelationshipConfiguration relationshipConfiguration = relationshipConfigurationFactory.create(config.getField());
         InstanceGenerator<R> instanceGenerator = (InstanceGenerator<R>) jNerator.prepare(relationshipType);
 
-        AttributeGenerator<?> attributeGenerator = attributeGeneratorFactory.create(config.getField(), instanceGenerator,
+        AttributeGenerator attributeGenerator = attributeGeneratorFactory.create(config.getField(), instanceGenerator,
             relationshipConfiguration);
 
         this.attributesGenerator.put(attributeName, attributeGenerator);
 
         return instanceGenerator;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <R> InstanceGenerator<R> forRelationship(String attributeName, Class<? extends R>... relationshipTypes) {
-        AttributeConfiguration<T> config = attributesConfiguration.get(attributeName);
-
-        RelationshipConfiguration relationshipConfiguration = relationshipConfigurationFactory.create(config.getField());
-
-        final List<InstanceGenerator<R>> allTypesGenerators = new ArrayList<InstanceGenerator<R>>();
-        for (Class<? extends R> relType : relationshipTypes) {
-            allTypesGenerators.add((InstanceGenerator<R>) jNerator.prepare(relType));
-        }
-
-        InstanceGenerator<R> proxyMultiGenerators = new InstanceGenerator<R>() {
-
-            public List<R> generate(int amount) {
-                List<R> ts = new ArrayList<R>();
-                for (InstanceGenerator<R> ig : allTypesGenerators) {
-                    ts.addAll(ig.generate(amount));
-                }
-                // let's shufle to avoid same results
-                Collections.shuffle(ts);
-                return ts;
-            }
-
-            public List<R> getCachedInstances() {
-                List<R> ts = new ArrayList<R>();
-                for (InstanceGenerator<R> ig : allTypesGenerators) {
-                    ts.addAll(ig.getCachedInstances());
-                }
-                return ts;
-            }
-
-            public <E> InstanceGenerator<R> setAttributeGenerator(String attributeName, AttributeGenerator<E> attributeGenerator) {
-                for (InstanceGenerator<R> ig : allTypesGenerators) {
-                    ig.setAttributeGenerator(attributeName, attributeGenerator);
-                }
-                return this;
-            }
-
-            public <E> InstanceGenerator<E> forRelationship(String attributeName, Class<? extends E> type) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set other attribute generators");
-            }
-
-            public <E> InstanceGenerator<E> forRelationship(String attributeName, Class<? extends E>... types) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set other attribute generators");
-            }
-
-            public InstanceGenerator<R> doNotGenerateAttribute(String... attributeNames) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set this parameter");
-            }
-
-            public AttributeConfiguration<R> forAttr(String attributeName) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set this parameter");
-            }
-
-            public <E> InstanceGenerator<E> forRelationship(String attributeName, List<Class<? extends E>> types) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set this parameter");
-            }
-
-            public AttributeConfiguration<R> getAttributeConfigurationFor(String attributeName) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set this parameter");
-            }
-
-        };
-
-        AttributeGenerator<?> attributeGenerator = attributeGeneratorFactory.create(config.getField(), proxyMultiGenerators,
-            relationshipConfiguration);
-
-        this.attributesGenerator.put(attributeName, attributeGenerator);
-
-        return proxyMultiGenerators;
     }
 
     public InstanceGenerator<T> doNotGenerateAttribute(String... attributeNames) {
@@ -276,19 +198,14 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
                 return ts;
             }
 
-            public <I> InstanceGenerator<E> setAttributeGenerator(String attributeName, AttributeGenerator<I> attributeGenerator) {
+            public <I> InstanceGenerator<E> setAttributeGenerator(String attributeName, AttributeGenerator attributeGenerator) {
                 for (InstanceGenerator<E> ig : allTypesGenerators) {
                     ig.setAttributeGenerator(attributeName, attributeGenerator);
                 }
                 return this;
             }
 
-            public <E> InstanceGenerator<E> forRelationship(String attributeName, Class<? extends E> type) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set other attribute generators");
-            }
-
-            public <R> InstanceGenerator<R> forRelationship(String attributeName, Class<? extends R>... types) {
+            public <EE> InstanceGenerator<EE> forRelationship(String attributeName, Class<? extends EE> type) {
                 throw new UnsupportedOperationException(
                     "Multi types relationship attribute generators cannot set other attribute generators");
             }
@@ -308,14 +225,9 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
                     "Multi types relationship attribute generators cannot set this parameter");
             }
 
-            public AttributeConfiguration<E> getAttributeConfigurationFor(String attributeName) {
-                throw new UnsupportedOperationException(
-                    "Multi types relationship attribute generators cannot set this parameter");
-            }
-
         };
 
-        AttributeGenerator<?> attributeGenerator = attributeGeneratorFactory.create(config.getField(), proxyMultiGenerators,
+        AttributeGenerator attributeGenerator = attributeGeneratorFactory.create(config.getField(), proxyMultiGenerators,
             relationshipConfiguration);
 
         this.attributesGenerator.put(attributeName, attributeGenerator);
