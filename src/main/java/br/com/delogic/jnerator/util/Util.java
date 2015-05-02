@@ -14,4 +14,12 @@ public class Util {
         return random.nextInt(limit);
     }
 
+    public static final long nextLong(){
+        return random.nextLong();
+    }
+
+    public static final boolean nextBoolean(){
+        return random.nextBoolean();
+    }
+
 }

@@ -62,6 +62,13 @@ public class JNeratorTest extends Assert {
         // StoreDelivered.class))
         // .generate(50);
 
+//        jNerator.prepare(Tenent.class).forAttr("teste").use(new AttributeGenerator(){
+//
+//            public <T> Object generate(int index, AttributeConfiguration<T> attributeConfiguration, Object instance) {
+//                // TODO Auto-generated method stub
+//                return null;
+//            }}).generate(10);
+
         assertHasData(jNerator.prepare(Tenent.class).generate(amount));
         assertHasData(jNerator.prepare(Category.class).generate(amount));
         assertHasData(jNerator.prepare(Product.class).generate(amount));

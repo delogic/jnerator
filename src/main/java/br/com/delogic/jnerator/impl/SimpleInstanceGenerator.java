@@ -3,8 +3,8 @@ package br.com.delogic.jnerator.impl;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,7 +44,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
         this.relationshipConfigurationFactory = relationshipConfigurationFactory;
         this.attributeGeneratorFactory = attributeGeneratorFactory;
         this.attributesConfiguration = asMap(attributeConfigurationFactory.create(type, this));
-        this.attributesGenerator = new HashMap<String, AttributeGenerator>();
+        this.attributesGenerator = new LinkedHashMap<String, AttributeGenerator>();
         this.ignoredAttributes = new HashSet<String>();
 
         for (Entry<String, AttributeConfigurationImpl<T>> attributeConfiguration : attributesConfiguration.entrySet()) {
@@ -55,7 +55,7 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     }
 
     private Map<String, AttributeConfigurationImpl<T>> asMap(List<AttributeConfigurationImpl<T>> create) {
-        Map<String, AttributeConfigurationImpl<T>> attrs = new HashMap<String, AttributeConfigurationImpl<T>>();
+        Map<String, AttributeConfigurationImpl<T>> attrs = new LinkedHashMap<String, AttributeConfigurationImpl<T>>();
         for (AttributeConfigurationImpl<T> ac : create) {
             attrs.put(ac.getName(), ac);
         }
@@ -105,17 +105,12 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     }
 
     void populateInstance(T instance, int index) {
-
-        for (Entry<String, AttributeConfigurationImpl<T>> config : attributesConfiguration.entrySet()) {
-
-            AttributeGenerator generator = attributesGenerator.get(config.getKey());
-
-            Object value = generator.generate(index, config.getValue(), instance);
-
-            Field field = config.getValue().getField();
-
+        for (String attributeName : attributesGenerator.keySet()) {
+            AttributeGenerator generator = attributesGenerator.get(attributeName);
+            AttributeConfiguration<T> config = attributesConfiguration.get(attributeName);
+            Object value = generator.generate(index, config, instance);
+            Field field = config.getField();
             setFieldValue(field, instance, value);
-
         }
     }
 
@@ -135,6 +130,8 @@ public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
     }
 
     public <E> InstanceGenerator<T> setAttributeGenerator(String attributeName, AttributeGenerator attributeGenerator) {
+        attributesGenerator.remove(attributeName);
+        // always put new generators at the end to obey order of generation
         attributesGenerator.put(attributeName, attributeGenerator);
         return this;
     }

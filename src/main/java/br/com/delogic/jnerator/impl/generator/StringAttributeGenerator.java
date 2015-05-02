@@ -24,7 +24,7 @@ public class StringAttributeGenerator implements AttributeGenerator {
             return sb.toString().trim();
         }
 
-        return attributeConfiguration.getName() + " " + index;
+        return attributeConfiguration.getField().getDeclaringClass().getSimpleName() + " " + attributeConfiguration.getName() + " " + index;
     }
 
 }
