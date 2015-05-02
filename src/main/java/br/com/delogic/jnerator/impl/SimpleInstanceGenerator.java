@@ -26,10 +26,8 @@ import br.com.delogic.jnerator.util.ReflectionUtils;
 
 public class SimpleInstanceGenerator<T> implements InstanceGenerator<T> {
 
-    // <AttributeName, AttributeConfiguration>
     private final Map<String, AttributeConfigurationImpl<T>> attributesConfiguration;
 
-    // <AttributeName, AttributeGenerator>
     private final Map<String, AttributeGenerator>            attributesGenerator;
     private final Class<T>                                   type;
     private List<T>                                          cachedInstances;
