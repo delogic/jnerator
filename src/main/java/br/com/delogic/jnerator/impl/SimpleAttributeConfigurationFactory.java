@@ -1,6 +1,7 @@
 package br.com.delogic.jnerator.impl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,12 @@ public class SimpleAttributeConfigurationFactory implements AttributeConfigurati
         List<AttributeConfigurationImpl<T>> attrs = new ArrayList<AttributeConfigurationImpl<T>>();
 
         for (Field field : fields) {
-            attrs.add(new AttributeConfigurationImpl<T>(field.getName(), field, instanceGenerator));
+            if (!Modifier.isTransient(field.getModifiers()) &&
+                !Modifier.isFinal(field.getModifiers()) &&
+                !field.getName().startsWith("_persistence_")) {
+                // fields1
+                attrs.add(new AttributeConfigurationImpl<T>(field.getName(), field, instanceGenerator));
+            }
         }
 
         return attrs;
