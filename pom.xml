@@ -3,12 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.delogic</groupId>
     <artifactId>jnerator</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1-SNAPSHOT</version>
     <name>jnerator</name>
 
     <properties>
         <org.slf4j.version>1.7.5</org.slf4j.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<maven.compiler.source>1.7</maven.compiler.source>		
     </properties>
 
     <dependencies>
@@ -130,6 +132,9 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+							<additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>						
                     </execution>
                 </executions>
             </plugin>
